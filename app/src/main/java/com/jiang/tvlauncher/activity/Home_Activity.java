@@ -44,6 +44,10 @@ import com.jiang.tvlauncher.utils.WifiApUtils;
 import com.jiang.tvlauncher.view.TitleView;
 import com.squareup.picasso.Picasso;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -93,11 +97,25 @@ public class Home_Activity extends Base_Activity implements View.OnClickListener
     ImageView imageView;
     VideoView videoView;
 
+    @Override
+    protected void onDestroy() {
+        EventBus.getDefault().unregister(this);
+        super.onDestroy();
+    }
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessage() {
+
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activty_home);
+
+        EventBus.getDefault().register(this);
+
         MyAppliaction.activity = this;
 
         initview();

@@ -97,7 +97,7 @@ public class ThirdPartyReceiver extends BroadcastReceiver implements IThirdParty
     @Override
     public void getAccount(String channel, final IThirdPartyAuthCallback thirdPartyAuthCallback) {
         //fixme 由厂商实现的接口 成功获取到接口vuid,vtoken,accessToken必须通过data回调给视频客户端，需要视频处理的错误定义好提示文案放errTip中
-        Toast.makeText(context, "正在为您提供会员服务", Toast.LENGTH_LONG).show();
+//        Toast.makeText(context, "正在为您提供会员服务", Toast.LENGTH_LONG).show();
 
         try {
             thirdPartyAuthCallback.authInfo(0, "get vuid error", SaveUtils.getString(Save_Key.PARAMS)); //data需要返回vuid,vtoken,accesssToken
