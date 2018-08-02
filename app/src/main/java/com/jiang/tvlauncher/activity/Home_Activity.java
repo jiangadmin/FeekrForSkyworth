@@ -21,7 +21,7 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.google.gson.Gson;
-import com.jiang.tvlauncher.MyAppliaction;
+import com.jiang.tvlauncher.MyApp;
 import com.jiang.tvlauncher.R;
 import com.jiang.tvlauncher.dialog.Loading;
 import com.jiang.tvlauncher.dialog.NetDialog;
@@ -40,14 +40,10 @@ import com.jiang.tvlauncher.utils.LogUtil;
 import com.jiang.tvlauncher.utils.SaveUtils;
 import com.jiang.tvlauncher.utils.ShellUtils;
 import com.jiang.tvlauncher.utils.Tools;
-import com.jiang.tvlauncher.utils.WifiApUtils;
 import com.jiang.tvlauncher.view.TitleView;
 import com.squareup.picasso.Picasso;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-
+import java.io.DataOutputStream;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -97,26 +93,13 @@ public class Home_Activity extends Base_Activity implements View.OnClickListener
     ImageView imageView;
     VideoView videoView;
 
-    @Override
-    protected void onDestroy() {
-        EventBus.getDefault().unregister(this);
-        super.onDestroy();
-    }
-
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessage() {
-
-    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activty_home);
 
-        EventBus.getDefault().register(this);
-
-        MyAppliaction.activity = this;
+        MyApp.activity = this;
 
         initview();
         initeven();
@@ -132,6 +115,11 @@ public class Home_Activity extends Base_Activity implements View.OnClickListener
             updateshow(new Gson().fromJson(SaveUtils.getString(Save_Key.Channe), FindChannelList.class));
         }
 
+
+        String apkRoot = "chmod 777 " + getPackageCodePath();
+        RootCommand(apkRoot);
+
+        LogUtil.e(TAG, "I Have root:" + ShellUtils.checkRootPermission());
     }
 
     public void update() {
@@ -172,7 +160,7 @@ public class Home_Activity extends Base_Activity implements View.OnClickListener
         titleview = findViewById(R.id.titleview);
 
         ver = findViewById(R.id.ver);
-        ver.setText("V " + Tools.getVersionName(MyAppliaction.context));
+        ver.setText("V " + Tools.getVersionName(MyApp.context));
 
         //获取屏幕宽度
         DisplayMetrics metric = new DisplayMetrics();
@@ -267,18 +255,11 @@ public class Home_Activity extends Base_Activity implements View.OnClickListener
         home1.requestFocus();
     }
 
-    @Override
-    public void onBackPressed() {
-        return;
-    }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
 
-        if (WifiApUtils.getInstance(this).checkWifiApStatus())
-            wifiap.setVisibility(View.VISIBLE);
-        else
-            wifiap.setVisibility(View.GONE);
+        LogUtil.e(TAG, keyCode);
 
         switch (keyCode) {
             case KeyEvent.KEYCODE_BACK:
@@ -288,8 +269,10 @@ public class Home_Activity extends Base_Activity implements View.OnClickListener
             case KeyEvent.KEYCODE_DPAD_LEFT:
             case KeyEvent.KEYCODE_DPAD_RIGHT:
                 return false;
+
+            default:
+                return true;
         }
-        return true;
     }
 
     @Override
@@ -302,24 +285,6 @@ public class Home_Activity extends Base_Activity implements View.OnClickListener
             toolbar_view.setVisibility(View.GONE);
             toolbar_show = false;
         }
-
-//        //禁止调焦
-//        try {
-//            MyAppliaction.apiManager.set("setFocusOnOff", "false", null, null, null);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-    }
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        //禁止调焦
-//        try {
-//            MyAppliaction.apiManager.set("setFocusOnOff", "false", null, null, null);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
 
     }
 
@@ -380,12 +345,12 @@ public class Home_Activity extends Base_Activity implements View.OnClickListener
                 new PwdDialog(this, R.style.MyDialog).show();
                 break;
             case R.id.setting:
-                LogUtil.e(TAG, "Password:" + SaveUtils.getString(Save_Key.Password));
-                if (TextUtils.isEmpty(SaveUtils.getString(Save_Key.Password))) {
-                    Setting_Activity.start(this);
-                } else {
-                    new PwdDialog(this, R.style.MyDialog).show();
-                }
+//                startActivity(new Intent(getPackageManager().getLaunchIntentForPackage("com.android.settings")));
+//                LogUtil.e(TAG, "Password:" + SaveUtils.getString(Save_Key.Password));
+//                if (TextUtils.isEmpty(SaveUtils.getString(Save_Key.Password))) {
+//                } else {
+                new PwdDialog(this, R.style.MyDialog).show();
+//                }
                 break;
             case R.id.home_1:
                 open(0);
@@ -492,6 +457,44 @@ public class Home_Activity extends Base_Activity implements View.OnClickListener
                     reduceAnim(view);
                 break;
         }
+    }
+
+
+    /**
+     * 11
+     * 应用程序运行命令获取 Root权限，设备必须已破解(获得ROOT权限)
+     * 12
+     *
+     * @param command 命令：String apkRoot="chmod 777 "+getPackageCodePath(); RootCommand(apkRoot);
+     *                13
+     * @return 应用程序是/否获取Root权限
+     * 14
+     */
+
+    public static boolean RootCommand(String command) {
+        Process process = null;
+        DataOutputStream os = null;
+        try {
+            process = Runtime.getRuntime().exec("su");
+            os = new DataOutputStream(process.getOutputStream());
+            os.writeBytes(command + "\n");
+            os.writeBytes("exit\n");
+            os.flush();
+            process.waitFor();
+        } catch (Exception e) {
+            LogUtil.e(TAG, e.getMessage());
+            return false;
+        } finally {
+            try {
+                if (os != null) {
+                    os.close();
+                }
+                process.destroy();
+            } catch (Exception e) {
+            }
+        }
+        LogUtil.e(TAG, "ROOT");
+        return true;
     }
 
     /**

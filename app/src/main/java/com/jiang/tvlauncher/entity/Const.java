@@ -25,6 +25,9 @@ public class Const {
 
     public static boolean IsGetVip = false;  //本次开机时候获取过Vip
 
+    //设备类型  1 极米投影  2 创维盒子
+    public static String devType = "2";
+
     public static String 包 = "baobaobao";
     public static String TvViedoDow = "TvViedoDow";//定制版腾讯视频下载地址
 

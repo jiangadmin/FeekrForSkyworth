@@ -1,22 +1,16 @@
 package com.jiang.tvlauncher.activity;
 
-import android.app.AlertDialog;
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.RemoteException;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.LinearLayout;
 
-import com.jiang.tvlauncher.MyAppliaction;
+import com.jiang.tvlauncher.MyApp;
 import com.jiang.tvlauncher.R;
 import com.jiang.tvlauncher.dialog.Loading;
-import com.jiang.tvlauncher.entity.Const;
-import com.jiang.tvlauncher.servlet.SyncDevZoom_Servlet;
 import com.jiang.tvlauncher.servlet.Update_Servlet;
 import com.jiang.tvlauncher.utils.Tools;
 
@@ -31,7 +25,7 @@ import com.jiang.tvlauncher.utils.Tools;
 public class Setting_Activity extends Base_Activity implements View.OnClickListener {
     private static final String TAG = "Setting_Activity";
 
-    //网络，蓝牙，设置，文件，更新，关于
+    //商店  互联 媒体中心  网络 检测更新  设置
     LinearLayout setting1, setting2, setting3, setting4, setting5, setting6;
 
     public static void start(Context context) {
@@ -44,48 +38,20 @@ public class Setting_Activity extends Base_Activity implements View.OnClickListe
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
-        MyAppliaction.activity = this;
+        MyApp.activity = this;
+
         initview();
         initeven();
 
-//        try {
-//            MyAppliaction.apiManager.set("setFocusOnOff", "true", null, null, null);
-//        } catch (RemoteException e) {
-//            e.printStackTrace();
-//        }
-    }
-
-    @Override
-    protected void onStop() {
-
-//        try {
-//            MyAppliaction.apiManager.set("setFocusOnOff", "false", null, null, null);
-//        } catch (RemoteException e) {
-//            e.printStackTrace();
-//        }
-
-        super.onStop();
-    }
-
-    @Override
-    protected void onDestroy() {
-//
-//        try {
-//            MyAppliaction.apiManager.set("setFocusOnOff", "false", null, null, null);
-//        } catch (RemoteException e) {
-//            e.printStackTrace();
-//        }
-
-        super.onDestroy();
     }
 
     private void initview() {
-        setting1 =  findViewById(R.id.setting_1);
-        setting2 =  findViewById(R.id.setting_2);
-        setting3 =  findViewById(R.id.setting_3);
-        setting4 =  findViewById(R.id.setting_4);
-        setting5 =  findViewById(R.id.setting_5);
-        setting6 =  findViewById(R.id.setting_6);
+        setting1 = findViewById(R.id.setting_1);
+        setting2 = findViewById(R.id.setting_2);
+        setting3 = findViewById(R.id.setting_3);
+        setting4 = findViewById(R.id.setting_4);
+        setting5 = findViewById(R.id.setting_5);
+        setting6 = findViewById(R.id.setting_6);
     }
 
     private void initeven() {
@@ -102,6 +68,18 @@ public class Setting_Activity extends Base_Activity implements View.OnClickListe
         switch (view.getId()) {
             //网络设置
             case R.id.setting_1:
+                startActivity(new Intent(getPackageManager().getLaunchIntentForPackage("com.mipt.store")));
+                break;
+            //蓝牙设置
+            case R.id.setting_2:
+                startActivity(new Intent(getPackageManager().getLaunchIntentForPackage("com.skyworthdigital.skywechatclient")));
+                break;
+            //梯形校正
+            case R.id.setting_3:
+                startActivity(new Intent(getPackageManager().getLaunchIntentForPackage("com.skyworthdigital.skymediacenter")));
+                break;
+            //文件管理
+            case R.id.setting_4:
                 //如果是有线连接
                 if (Tools.isLineConnected())
                     //启动到有线连接页面
@@ -110,23 +88,6 @@ public class Setting_Activity extends Base_Activity implements View.OnClickListe
                     //启动到无线连接页面
                     startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
                 break;
-            //蓝牙设置
-            case R.id.setting_2:
-                startActivity(new Intent(Settings.ACTION_BLUETOOTH_SETTINGS  ));
-                break;
-            //梯形校正
-            case R.id.setting_3:
-                Intent intent = new Intent(Intent.ACTION_MAIN);
-                intent.addCategory(Intent.CATEGORY_LAUNCHER);
-                ComponentName cn = new ComponentName("com.android.newsettings", "com.android.newsettings.framesettings.kstActivity");
-                intent.setComponent(cn);
-                startActivityForResult(intent, 7);
-//                startActivity(new Intent(getPackageManager().getLaunchIntentForPackage("com.android.newsettings.framesettings.kstActivity")));
-                break;
-            //文件管理
-            case R.id.setting_4:
-                startActivity(new Intent(getPackageManager().getLaunchIntentForPackage(Const.资源管理器)));
-                break;
             //检测更新
             case R.id.setting_5:
                 Loading.show(this, "检查更新");
@@ -134,27 +95,9 @@ public class Setting_Activity extends Base_Activity implements View.OnClickListe
                 break;
             //关于本机
             case R.id.setting_6:
-                startActivity(new Intent(Settings.ACTION_SETTINGS));
+                startActivity(new Intent(getPackageManager().getLaunchIntentForPackage("com.skyworthdigital.settings")));
                 break;
         }
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 7) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("梯形校正");
-            builder.setMessage("是否同步数据到服务器？");
-            builder.setNegativeButton("取消", null);
-            builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    Loading.show(Setting_Activity.this, "同步中···");
-                    new SyncDevZoom_Servlet().execute();
-                }
-            });
-            builder.show();
-        }
-    }
 }

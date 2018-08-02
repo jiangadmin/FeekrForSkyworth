@@ -5,15 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.RemoteException;
 import android.util.Log;
-import android.widget.Toast;
 
-import com.jiang.tvlauncher.MyAppliaction;
 import com.jiang.tvlauncher.entity.Save_Key;
-import com.jiang.tvlauncher.servlet.GetVIP_Servlet;
 import com.jiang.tvlauncher.servlet.VIPCallBack_Servlet;
 import com.jiang.tvlauncher.utils.LogUtil;
 import com.jiang.tvlauncher.utils.SaveUtils;
-import com.jiang.tvlauncher.utils.Tools;
 import com.ktcp.video.thirdagent.JsonUtils;
 import com.ktcp.video.thirdagent.ThirdPartyAgent;
 import com.ktcp.video.thirdagent.inter.IThirdPartyAgentListener;

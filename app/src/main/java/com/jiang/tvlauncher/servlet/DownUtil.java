@@ -3,15 +3,13 @@ package com.jiang.tvlauncher.servlet;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Environment;
 import android.view.KeyEvent;
 import android.widget.Toast;
 
-import com.jiang.tvlauncher.MyAppliaction;
 import com.jiang.tvlauncher.dialog.Loading;
 import com.jiang.tvlauncher.utils.LogUtil;
+import com.jiang.tvlauncher.utils.ShellUtils;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -81,17 +79,10 @@ public class DownUtil {
                         //如果是安装包
                         if (fileName.contains(".apk")) {
                             LogUtil.e(TAG, "安装包");
+                            //静默安装
 
-//                            //是极米设备
-//                            if (MyAppliaction.isxgimi) {
-//                                //调用极米静默安装
-//                                MyAppliaction.apiManager.set("setInstallApk", file.getPath(), null, null, null);
-//
-//                            } else {
-//                                Intent intent = new Intent(Intent.ACTION_VIEW);
-//                                intent.setDataAndType(Uri.fromFile(file), "application/vnd.android.package-archive");
-//                                activity.startActivity(intent);
-//                            }
+                            ShellUtils.execCommand("pm install -r "+file.getPath(),false);
+//                            ShellUtils.installSilent(file.getPath());
 
                         }
                         //如果是资源文件

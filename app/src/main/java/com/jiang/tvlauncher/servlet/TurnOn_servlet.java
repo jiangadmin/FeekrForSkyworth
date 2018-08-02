@@ -8,7 +8,7 @@ import android.os.CountDownTimer;
 import android.text.TextUtils;
 
 import com.google.gson.Gson;
-import com.jiang.tvlauncher.MyAppliaction;
+import com.jiang.tvlauncher.MyApp;
 import com.jiang.tvlauncher.activity.Home_Activity;
 import com.jiang.tvlauncher.dialog.Loading;
 import com.jiang.tvlauncher.entity.Const;
@@ -46,31 +46,19 @@ public class TurnOn_servlet extends AsyncTask<String, Integer, TurnOnEntity> {
     @Override
     protected TurnOnEntity doInBackground(String... strings) {
         Map map = new HashMap();
-        TurnOnEntity entity;
 
-        if (TextUtils.isEmpty(MyAppliaction.ID)) {
-            if (!TextUtils.isEmpty(SaveUtils.getString(Save_Key.SerialNum))) {
-                MyAppliaction.ID = SaveUtils.getString(Save_Key.SerialNum);
-                MyAppliaction.turnType = SaveUtils.getString(Save_Key.turnType);
-                MyAppliaction.modelNum = SaveUtils.getString(Save_Key.modelNum);
-            } else {
-                new TurnOn_servlet(context).execute();
-                entity = new TurnOnEntity();
-                entity.setErrorcode(-3);
-                entity.setErrormsg("数据缺失 再来一次");
-                return entity;
-            }
-        }
+        map.put("devType", Const.devType);
 
-        map.put("serialNum", MyAppliaction.ID);
-        map.put("turnType", MyAppliaction.turnType);
-        map.put("modelNum", MyAppliaction.modelNum);
+        map.put("serialNum", MyApp.getSerialNum());
+        map.put("turnType", MyApp.turnType);
+        map.put("modelNum", MyApp.modelNum);
 
         map.put("systemVersion", Build.VERSION.INCREMENTAL);
         map.put("androidVersion", Build.VERSION.RELEASE);
 
         String res = HttpUtil.doPost(Const.URL + "dev/devTurnOffController/turnOn.do", map);
 
+        TurnOnEntity entity;
         if (TextUtils.isEmpty(res)) {
             entity = new TurnOnEntity();
             entity.setErrorcode(-1);
@@ -93,7 +81,7 @@ public class TurnOn_servlet extends AsyncTask<String, Integer, TurnOnEntity> {
         LogUtil.e(TAG, "=======================================================================================");
 
         if (entity.getErrorcode() == 1000) {
-            MyAppliaction.TurnOnS = true;
+            MyApp.TurnOnS = true;
 
             //归零
             num = 0;
@@ -183,7 +171,7 @@ public class TurnOn_servlet extends AsyncTask<String, Integer, TurnOnEntity> {
 
             //获取开屏
             new FindLanunch_Servlet().execute();
-            LogUtil.e(TAG,"触发");
+            LogUtil.e(TAG, "触发");
 
             //判断是否是有线连接 & 服务启用同步数据
             if (Tools.isLineConnected() && entity.getResult().getShadowcnf() != null
@@ -239,10 +227,10 @@ public class TurnOn_servlet extends AsyncTask<String, Integer, TurnOnEntity> {
         Const.Nets = false;
         Loading.dismiss();
 
-        switch (entity.getErrorcode()){
+        switch (entity.getErrorcode()) {
             case 1000:
-                if (MyAppliaction.activity != null && MyAppliaction.activity.getClass() == Home_Activity.class) {
-                    ((Home_Activity) MyAppliaction.activity).update();
+                if (MyApp.activity != null && MyApp.activity.getClass() == Home_Activity.class) {
+                    ((Home_Activity) MyApp.activity).update();
                 }
                 break;
         }

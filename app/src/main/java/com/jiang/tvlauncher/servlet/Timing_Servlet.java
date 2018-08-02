@@ -3,7 +3,7 @@ package com.jiang.tvlauncher.servlet;
 import android.os.AsyncTask;
 
 import com.google.gson.Gson;
-import com.jiang.tvlauncher.MyAppliaction;
+import com.jiang.tvlauncher.MyApp;
 import com.jiang.tvlauncher.entity.BaseEntity;
 import com.jiang.tvlauncher.entity.Const;
 import com.jiang.tvlauncher.entity.Save_Key;
@@ -31,6 +31,7 @@ public class Timing_Servlet extends AsyncTask<String, Integer, BaseEntity> {
     @Override
     protected BaseEntity doInBackground(String... infos) {
         Map map = new HashMap();
+        map.put("devType", Const.devType);
         map.put("devId", SaveUtils.getString(Save_Key.ID));
         map.put("netSpeed", "1");
         map.put("storage", FileUtils.getRomSize());
@@ -60,7 +61,7 @@ public class Timing_Servlet extends AsyncTask<String, Integer, BaseEntity> {
     protected void onPostExecute(BaseEntity entity) {
         super.onPostExecute(entity);
         if (sleep) {
-            if (MyAppliaction.isForeground()) {
+            if (MyApp.isForeground()) {
 
             }
         }

@@ -31,6 +31,7 @@ public class FindLanunch_Servlet extends AsyncTask<String, Integer, FindLanunch>
     @Override
     protected FindLanunch doInBackground(String... strings) {
         Map map = new HashMap();
+        map.put("devType", Const.devType);
         map.put("devId", SaveUtils.getString(Save_Key.ID));
         String res = HttpUtil.doPost(Const.URL + "cms/launchController/findLaunchList.do", map);
         FindLanunch lanunch;

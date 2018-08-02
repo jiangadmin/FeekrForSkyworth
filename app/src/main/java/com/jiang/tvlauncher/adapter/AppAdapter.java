@@ -23,6 +23,7 @@ import java.util.Random;
  * @version 1.0
  * @since 2016.5.10
  */
+
 public class AppAdapter extends BaseAdapter {
     private static final String TAG = "AppAdapter";
 

@@ -28,12 +28,12 @@
                 android:layout_marginBottom="20dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_setting_wifi" />
+                android:src="@drawable/ic_setting_store" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/setting_1"
+                android:text="应用商店"
                 android:textColor="@color/white"
                 android:textSize="26sp" />
 
@@ -58,12 +58,12 @@
                 android:layout_marginBottom="20dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_setting_bluetooth" />
+                android:src="@drawable/ic_setting_wechat" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/setting_2"
+                android:text="微信互联"
                 android:textColor="@color/white"
                 android:textSize="26sp" />
 
@@ -87,12 +87,12 @@
                 android:layout_marginBottom="20dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_setting_t" />
+                android:src="@drawable/ic_setting_usb" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/setting_3"
+                android:text="媒体中心"
                 android:textColor="@color/white"
                 android:textSize="26sp" />
 
@@ -125,12 +125,12 @@
                 android:layout_marginBottom="20dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_setting_file" />
+                android:src="@drawable/ic_setting_wifi" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/setting_4"
+                android:text="@string/setting_1"
                 android:textColor="@color/white"
                 android:textSize="26sp" />
 
