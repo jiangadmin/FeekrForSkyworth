@@ -7,6 +7,8 @@ import android.os.Environment;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.jiang.tvlauncher.utils.LogUtil;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -74,7 +76,8 @@ public class MyDownService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         msg = intent.getStringExtra("msg").trim();
-        System.out.println(msg);
+        LogUtil.e(TAG,msg);
+
         new Thread() {
 
             public void run() {

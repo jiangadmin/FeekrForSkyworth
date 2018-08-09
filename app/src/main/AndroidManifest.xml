@@ -60,7 +60,7 @@
 
         <activity
             android:name=".activity.Home_Activity"
-            android:launchMode="singleInstance"
+            android:launchMode="singleTask"
             android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

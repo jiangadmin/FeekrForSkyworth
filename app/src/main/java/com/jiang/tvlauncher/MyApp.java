@@ -7,6 +7,7 @@ import android.content.Context;
 
 import com.ctvdevicemanger.aidl.IctvDeviceManager;
 import com.jiang.tvlauncher.entity.Save_Key;
+import com.jiang.tvlauncher.servlet.Timing_Servlet;
 import com.jiang.tvlauncher.servlet.TurnOn_servlet;
 import com.jiang.tvlauncher.utils.LogUtil;
 import com.jiang.tvlauncher.utils.SaveUtils;
@@ -71,6 +72,7 @@ public class MyApp extends Application {
         LogUtil.e(TAG, "Android版本:" + SystemPropertiesProxy.getString(this, "ro.build.version.release"));
 
         new TurnOn_servlet(this).execute();
+        new Timing_Servlet().execute();
 
     }
 

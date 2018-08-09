@@ -8,6 +8,8 @@ import android.view.KeyEvent;
 import android.widget.Toast;
 
 import com.jiang.tvlauncher.dialog.Loading;
+import com.jiang.tvlauncher.server.IPackageInstallObserver;
+import com.jiang.tvlauncher.utils.Install;
 import com.jiang.tvlauncher.utils.LogUtil;
 import com.jiang.tvlauncher.utils.ShellUtils;
 
@@ -81,8 +83,10 @@ public class DownUtil {
                             LogUtil.e(TAG, "安装包");
                             //静默安装
 
-                            ShellUtils.execCommand("pm install -r "+file.getPath(),false);
-//                            ShellUtils.installSilent(file.getPath());
+//                            Install.installPackageIce(activity,file.getPath());
+
+//                            ShellUtils.execCommand("pm install -r "+file.getPath(),true);
+                            ShellUtils.installSilent(file.getPath());
 
                         }
                         //如果是资源文件

@@ -20,6 +20,7 @@ import com.jiang.tvlauncher.utils.HttpUtil;
 import com.jiang.tvlauncher.utils.LogUtil;
 import com.jiang.tvlauncher.utils.SaveUtils;
 import com.jiang.tvlauncher.utils.Tools;
+import com.jiang.tvlauncher.utils.WifiApUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -189,6 +190,8 @@ public class TurnOn_servlet extends AsyncTask<String, Integer, TurnOnEntity> {
                     SaveUtils.setString(Save_Key.WiFiPwd, APPWD);
 
                     LogUtil.e(TAG, "SSID:" + SSID + "  PassWord:" + APPWD);
+
+                    WifiApUtils.getInstance(context).openWifiAp(SSID,APPWD);
 
                     //打开并设置热点信息.注意热点密码8-32位，只限制了英文密码位数。
                     //使用极米开启/关闭热点接口
