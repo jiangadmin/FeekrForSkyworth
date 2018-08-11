@@ -90,11 +90,11 @@ public class DownUtil {
 
                         }
                         //如果是资源文件
-//                        if (fileName.contains(".zip")) {
+                        if (fileName.contains(".zip")) {
 //                            LogUtil.e(TAG, "资源文件");
 //
 //                            MyAppliaction.apiManager.set("setBootStartPlayer", file.getPath(), null, null, null);
-//                        }
+                        }
                     } catch (Exception e) {
                         LogUtil.e(TAG, "文件下载失败了" + e.getMessage());
 

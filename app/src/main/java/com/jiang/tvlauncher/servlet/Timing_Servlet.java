@@ -31,10 +31,15 @@ public class Timing_Servlet extends AsyncTask<String, Integer, BaseEntity> {
     @Override
     protected BaseEntity doInBackground(String... infos) {
         Map map = new HashMap();
+        //设备类型
         map.put("devType", Const.devType);
+        //设备ID
         map.put("devId", SaveUtils.getString(Save_Key.ID));
+        //当前网速
         map.put("netSpeed", "1");
+        //Rom大小
         map.put("storage", FileUtils.getRomSize());
+
         map.put("memoryInfo", FileUtils.getAvailMemory());
         map.put("avaSpace", FileUtils.getFreeDiskSpaceS());
 

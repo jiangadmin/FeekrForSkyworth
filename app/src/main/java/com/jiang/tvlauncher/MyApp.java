@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.Application;
 import android.content.Context;
+import android.widget.Toast;
 
 import com.ctvdevicemanger.aidl.IctvDeviceManager;
 import com.jiang.tvlauncher.entity.Save_Key;
@@ -35,7 +36,7 @@ public class MyApp extends Application {
     public static IctvDeviceManager apiManager;
 
     public static boolean IsLineNet = true;//是否是有线网络
-    public static String modelNum = "Z5极光";
+    public static String modelNum = "Skyworth";
     public static String serialNum;
     public static String turnType = "2";//开机类型 1 通电开机 2 手动开机
     public static String ID;
@@ -55,6 +56,7 @@ public class MyApp extends Application {
     public void onCreate() {
         super.onCreate();
         context = this;
+        Toast.makeText(this,"app 重启了..........",Toast.LENGTH_SHORT).show();
 
         //崩溃检测
         CrashReport.initCrashReport(getApplicationContext(), "b9c56f18c1", false);
@@ -66,6 +68,8 @@ public class MyApp extends Application {
         SaveUtils.setBoolean(Save_Key.FristTurnOn, true);
 
         setSerialNum(SystemPropertiesProxy.getString(this, "ro.serialno"));
+       LogUtil.e(TAG,"内存总大小："+ SystemPropertiesProxy.getTotalMemory("MemTotal"));
+       LogUtil.e(TAG,"内存可用："+ SystemPropertiesProxy.getTotalMemory("MemFree"));
 
         LogUtil.e(TAG, "机器型号:" + SystemPropertiesProxy.getString(this, "ro.product.model"));
         LogUtil.e(TAG, "系统版本:" + SystemPropertiesProxy.getString(this, "persist.sys.hwconfig.soft_ver"));

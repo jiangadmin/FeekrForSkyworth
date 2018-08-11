@@ -47,11 +47,13 @@ public class TurnOn_servlet extends AsyncTask<String, Integer, TurnOnEntity> {
     @Override
     protected TurnOnEntity doInBackground(String... strings) {
         Map map = new HashMap();
-
+        //设备类型
         map.put("devType", Const.devType);
-
+        //设备SN
         map.put("serialNum", MyApp.getSerialNum());
+        //开机类型
         map.put("turnType", MyApp.turnType);
+
         map.put("modelNum", MyApp.modelNum);
 
         map.put("systemVersion", Build.VERSION.INCREMENTAL);
@@ -204,6 +206,8 @@ public class TurnOn_servlet extends AsyncTask<String, Integer, TurnOnEntity> {
 //                        e.printStackTrace();
 //                    }
                 } else if (entity.getResult().getShadowcnf().getHotPoint() == 0) {            //关闭热点
+
+                    WifiApUtils.getInstance(context).closeWifiAp();
 //                    try {
 //                        MyAppliaction.apiManager.set("setCloseWifiAp", null, null, null, null);
 //                    } catch (RemoteException e) {

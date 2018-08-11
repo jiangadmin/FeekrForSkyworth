@@ -1,20 +1,22 @@
 package com.jiang.tvlauncher.utils;
- 
+
 import android.content.Context;
 import android.util.Log;
- 
+
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Method;
- 
+
 import dalvik.system.DexFile;
- 
+
 /**
  * Created by zhangqing on 2017/3/1.
  */
 public class SystemPropertiesProxy {
     public static final String TAG = "SystemPropertiesProxy";
- 
+
     /**
      * 根据给定的Key返回String类型的值
      *
@@ -36,7 +38,7 @@ public class SystemPropertiesProxy {
             //参数
             Object[] params = new Object[1];
             params[0] = new String(key);
- 
+
             result = (String) getString.invoke(SystemProperties, params);
         } catch (IllegalArgumentException e) {
             //e.printStackTrace();
@@ -47,7 +49,7 @@ public class SystemPropertiesProxy {
         }
         return result;
     }
- 
+
     /**
      * 根据给定的Key返回String类型的值
      *
@@ -72,7 +74,7 @@ public class SystemPropertiesProxy {
             Object[] params = new Object[2];
             params[0] = new String(key);
             params[1] = new String(def);
- 
+
             result = (String) getString.invoke(SystemProperties, params);
         } catch (IllegalArgumentException e) {
             //e.printStackTrace();
@@ -83,7 +85,7 @@ public class SystemPropertiesProxy {
         }
         return result;
     }
- 
+
     /**
      * 根据给定的key返回int类型的值
      *
@@ -118,7 +120,7 @@ public class SystemPropertiesProxy {
         }
         return result;
     }
- 
+
     /**
      * 根据给定的key返回long类型的值
      *
@@ -153,7 +155,7 @@ public class SystemPropertiesProxy {
         }
         return result;
     }
- 
+
     /**
      * 根据给定的key返回boolean类型的值
      * 如果值为'n','no','0','false' or 'off'返回false
@@ -191,7 +193,7 @@ public class SystemPropertiesProxy {
         }
         return result;
     }
- 
+
     /**
      * 根据给定的key和值设置属性, 该方法需要特定的权限才能操作.
      *
@@ -226,5 +228,36 @@ public class SystemPropertiesProxy {
         }
     }
 
+
+    /**
+     * 读取 RAM 信息
+     * @param key MemTotal 总大小  MemFree 可用大小
+     * @return
+     */
+    public static String getTotalMemory(String key) {
+
+        String str1 = "/proc/meminfo";
+
+        String str2 = "";
+
+        try {
+
+            FileReader fr = new FileReader(str1);
+
+            BufferedReader localBufferedReader = new BufferedReader(fr, 8192);
+
+            while ((str2 = localBufferedReader.readLine()) != null) {
+                LogUtil.e(TAG, "---" + str2);
+                if (str2.contains(key)) {
+
+                    return str2.substring(str2.indexOf(" ")).trim();
+                }
+            }
+            return null;
+
+        } catch (IOException e) {
+            return null;
+        }
+    }
 }
 
