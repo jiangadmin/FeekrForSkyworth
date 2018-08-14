@@ -71,7 +71,7 @@ public class NewAppAdapter extends BaseAdapter {
         final FindChannelList.ResultBean.AppListBean appBean = mAppBeanList.get(position);
 
         //判断程序有没有
-        if (Tools.isAppInstalled(appBean.getPackageName())) {
+        if (Tools.isAppInstalled(mContext,appBean.getPackageName())) {
             mHolder.icon.setImageDrawable(getAppIcon(appBean.getPackageName()));
         } else {
             mHolder.icon.setImageResource(R.drawable.feekr);

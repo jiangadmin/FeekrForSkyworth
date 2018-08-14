@@ -1,6 +1,9 @@
 package com.jiang.tvlauncher.activity;
 
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -392,7 +395,7 @@ public class Home_Activity extends Base_Activity implements View.OnClickListener
                     }
 
                     //验证是否有此应用
-                    if (Tools.isAppInstalled(packname)) {
+                    if (Tools.isAppInstalled(this,packname)) {
                         //如果要启动定制版腾讯视频
                         if (packname.equals(Const.TvViedo)) {
 

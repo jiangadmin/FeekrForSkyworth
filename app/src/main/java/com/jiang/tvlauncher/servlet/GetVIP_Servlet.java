@@ -95,7 +95,7 @@ public class GetVIP_Servlet extends AsyncTask<String, Integer, VIP_Entity> {
             }
         } else {
 
-            if (Tools.isAppInstalled(Const.TencentViedo)) {
+            if (Tools.isAppInstalled(MyApp.context,Const.TencentViedo)) {
 
                 //启动应用
                 LogUtil.e(TAG, "启动云视听");

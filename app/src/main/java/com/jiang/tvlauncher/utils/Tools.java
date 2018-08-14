@@ -353,6 +353,18 @@ public final class Tools {
         }
     }
 
+    public static boolean isAppInstalled(Context context,String packagename) {
+        PackageManager pm = context.getPackageManager();
+        List<PackageInfo> packages = pm.getInstalledPackages(0);
+        for (PackageInfo packageInfo : packages) {
+            if (packageInfo.packageName.equals(packagename)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+
     /**
      * 版本名
      *

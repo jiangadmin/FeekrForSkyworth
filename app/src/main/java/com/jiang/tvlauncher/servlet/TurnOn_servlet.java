@@ -19,6 +19,7 @@ import com.jiang.tvlauncher.server.TimingService;
 import com.jiang.tvlauncher.utils.HttpUtil;
 import com.jiang.tvlauncher.utils.LogUtil;
 import com.jiang.tvlauncher.utils.SaveUtils;
+import com.jiang.tvlauncher.utils.SystemPropertiesProxy;
 import com.jiang.tvlauncher.utils.Tools;
 import com.jiang.tvlauncher.utils.WifiApUtils;
 
@@ -56,8 +57,8 @@ public class TurnOn_servlet extends AsyncTask<String, Integer, TurnOnEntity> {
 
         map.put("modelNum", MyApp.modelNum);
 
-        map.put("systemVersion", Build.VERSION.INCREMENTAL);
-        map.put("androidVersion", Build.VERSION.RELEASE);
+        map.put("systemVersion", SystemPropertiesProxy.getString(context, "persist.sys.hwconfig.soft_ver"));
+        map.put("androidVersion", SystemPropertiesProxy.getString(context, "ro.build.version.release"));
 
         String res = HttpUtil.doPost(Const.URL + "dev/devTurnOffController/turnOn.do", map);
 
