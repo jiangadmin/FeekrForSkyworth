@@ -4,12 +4,11 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Environment;
+import android.os.SystemProperties;
 import android.view.KeyEvent;
 import android.widget.Toast;
 
 import com.jiang.tvlauncher.dialog.Loading;
-import com.jiang.tvlauncher.server.IPackageInstallObserver;
-import com.jiang.tvlauncher.utils.Install;
 import com.jiang.tvlauncher.utils.LogUtil;
 import com.jiang.tvlauncher.utils.ShellUtils;
 
@@ -73,27 +72,29 @@ public class DownUtil {
                     try {
                         // 在子线程中下载APK文件
                         File file = getFileFromServer(path, fileName, pd);
-                        sleep(1000);
-                        // 安装APK文件
-                        LogUtil.e(TAG, "文件下载完成" + fileName);
-                        if (showpd)
-                            pd.dismiss(); // 结束掉进度条对话框
-                        //如果是安装包
-                        if (fileName.contains(".apk")) {
-                            LogUtil.e(TAG, "安装包");
-                            //静默安装
 
-//                            Install.installPackageIce(activity,file.getPath());
+                        //判断文件是否下载成功
+                        if (file != null && file.exists()) {
+                            sleep(1000);
+                            LogUtil.e(TAG, "文件下载完成" + fileName);
+                            // 结束掉进度条对话框
+                            if (showpd)
+                                pd.dismiss();
 
-//                            ShellUtils.execCommand("pm install -r "+file.getPath(),true);
-                            ShellUtils.installSilent(file.getPath());
+                            if (fileName.contains(".apk")) {
+                                //静默安装
+                                ShellUtils.installSilent(file.getPath());
+                            } else if (fileName.contains(".zip")) {
+                                LogUtil.e(TAG, "下载ZIP");
 
-                        }
-                        //如果是资源文件
-                        if (fileName.contains(".zip")) {
-//                            LogUtil.e(TAG, "资源文件");
-//
-//                            MyAppliaction.apiManager.set("setBootStartPlayer", file.getPath(), null, null, null);
+                                //设置系统开机广告
+                                String bootanim = file.getPath().replace(fileName, "").replace("0","legacy");
+                                bootanim = bootanim.substring(0, bootanim.length() - 1);
+                                SystemProperties.set("persist.sys.bootanima.path", bootanim);
+                                LogUtil.e(TAG, "走开机动画" + bootanim);
+                                SystemProperties.set("persist.sys.bootanimation", "1");
+
+                            }
                         }
                     } catch (Exception e) {
                         LogUtil.e(TAG, "文件下载失败了" + e.getMessage());
@@ -113,6 +114,8 @@ public class DownUtil {
      * 从服务器下载apk
      */
     public static File getFileFromServer(String path, String fileName, ProgressDialog pd) throws Exception {
+
+        File file = null;
         // 如果相等的话表示当前的sdcard挂载在手机上并且是可用的
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
             URL url = new URL(path);
@@ -121,32 +124,50 @@ public class DownUtil {
             // 获取到文件的大小
             if (pd != null)
                 pd.setMax(conn.getContentLength() / 1024);
-            InputStream is = conn.getInputStream();
 
-            File file = new File(Environment.getExternalStorageDirectory().getPath() + "/feekr/Download/", fileName);
-            //判断文件夹是否被创建
-            if (!file.getParentFile().exists()) {
-                file.getParentFile().mkdirs();
+            InputStream is = null;
+            FileOutputStream fos = null;
+            BufferedInputStream bis = null;
+            try {
+                is = conn.getInputStream();
+                file = new File(Environment.getExternalStorageDirectory().getPath() + "/feekr/Download/", fileName);
+                //判断文件夹是否被创建
+                if (!file.getParentFile().exists()) {
+                    file.getParentFile().mkdirs();
+                }
+                fos = new FileOutputStream(file);
+                bis = new BufferedInputStream(is);
+
+                byte[] buffer = new byte[1024];
+                int len;
+                int total = 0;
+                while ((len = bis.read(buffer)) != -1) {
+                    fos.write(buffer, 0, len);
+                    total += len;
+                    // 获取当前下载量
+                    if (pd != null)
+                        pd.setProgress(total / 1024);
+                }
+
+            } catch (Exception ex) {
+                LogUtil.e(TAG, "文件下载失败了" + ex.getMessage());
+            } finally {
+                if (fos != null) {
+                    fos.close();
+                }
+
+                if (bis != null) {
+                    bis.close();
+                }
+
+                if (is != null) {
+                    is.close();
+                }
             }
-            FileOutputStream fos = new FileOutputStream(file);
-            BufferedInputStream bis = new BufferedInputStream(is);
-            byte[] buffer = new byte[1024];
-            int len;
-            int total = 0;
-            while ((len = bis.read(buffer)) != -1) {
-                fos.write(buffer, 0, len);
-                total += len;
-                // 获取当前下载量
-                if (pd != null)
-                    pd.setProgress(total / 1024);
-            }
-            fos.close();
-            bis.close();
-            is.close();
-            return file;
         } else {
             Loading.dismiss();
-            return null;
         }
+
+        return file;
     }
 }

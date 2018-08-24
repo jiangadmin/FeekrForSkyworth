@@ -2,14 +2,12 @@ package com.jiang.tvlauncher.utils;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Method;
-
-import dalvik.system.DexFile;
 
 /**
  * Created by zhangqing on 2017/3/1.
@@ -203,9 +201,9 @@ public class SystemPropertiesProxy {
      */
     public static void set(Context context, String key, String val) {
         try {
-            @SuppressWarnings("rawtypes")
-            DexFile df = new DexFile(new File("/system/app/Settings.apk"));
-            ClassLoader classLoader = context.getClassLoader();
+//            @SuppressWarnings("rawtypes")
+//            DexFile df = new DexFile(new File("/system/app/Settings.apk"));
+//            ClassLoader classLoader = context.getClassLoader();
             @SuppressWarnings("rawtypes")
             Class SystemProperties = Class.forName("android.os.SystemProperties");
             //参数类型
@@ -219,18 +217,24 @@ public class SystemPropertiesProxy {
             params[0] = new String(key);
             params[1] = new String(val);
             set.invoke(SystemProperties, params);
+            LogUtil.e(TAG, "设置" + key + "值为：" + val);
+
         } catch (IllegalArgumentException e) {
             //e.printStackTrace();
             //如果key超过32个字符或者value超过92个字符则抛出该异常
             Log.w(TAG, "key超过32个字符或者value超过92个字符");
         } catch (Exception e) {
             e.printStackTrace();
+            LogUtil.e(TAG,"设置失败");
+
+
         }
     }
 
 
     /**
      * 读取 RAM 信息
+     *
      * @param key MemTotal 总大小  MemFree 可用大小
      * @return
      */

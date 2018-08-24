@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.RemoteException;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.jiang.tvlauncher.entity.Save_Key;
 import com.jiang.tvlauncher.servlet.VIPCallBack_Servlet;
@@ -48,26 +49,43 @@ public class ThirdPartyReceiver extends BroadcastReceiver implements IThirdParty
                 ThirdPartyAgent.getInstance().setOnThirdPartyAgentListener(this);
                 ThirdPartyAgent.getInstance().doAuthLogin(channel);
 
-            }
+            } else if (dataObj.optInt("type") == ThirdPartyAgent.TYPE_NOTICE) {
 
-            //登录返回
-            if (dataObj.optInt("type") == ThirdPartyAgent.TYPE_NOTICE) {
+                //2=账户登录回调 3=账号退出回调  4=APP退出
+                int eveintId = dataObj.optInt("eventId");
+                String extraJson = dataObj.optString("extra");
+                int code = -1;
+                String msg = "";
+                if (extraJson != null && extraJson.length() > 0) {
+                    JSONObject extraObj = JsonUtils.getJsonObj(extraJson);
+                    code = extraObj.optInt("code");
+                    msg = extraObj.optString("msg");
+                }
 
-                String extra = dataObj.optString("extra");
-                JSONObject extraObj = JsonUtils.getJsonObj(extra);
-
-                int code = extraObj.optInt("code");
-                String msg = extraObj.optString("msg");
-                String vtoken = extraObj.optString("vtoken");
-                String vuid = (String.valueOf(extraObj.optLong("vuid")));
-
+                // 2 账户登录回调 3 退出登录 4 APP退出
+                LogUtil.e(TAG,"状态码："+eveintId);
+                Toast.makeText(context, "状态码："+eveintId, Toast.LENGTH_SHORT).show();
                 VIPCallBack_Servlet.TencentVip vip = new VIPCallBack_Servlet.TencentVip();
-                vip.setCode(String.valueOf(code));
-                vip.setMsg(msg);
-                new VIPCallBack_Servlet().execute(vip);
-
-                //登录失败
-                //关闭当前应用
+                switch (eveintId) {
+                    case 2:         //账户登录回调
+                        vip.setCode(String.valueOf(code));
+                        vip.setMsg(msg);
+                        vip.setEventId(String.valueOf(eveintId));
+                        new VIPCallBack_Servlet().execute(vip);
+                        break;
+                    case 3:         //退出登录
+                        vip.setCode(String.valueOf(code));
+                        vip.setMsg(msg);
+                        vip.setEventId(String.valueOf(eveintId));
+                        new VIPCallBack_Servlet().execute(vip);
+                        break;
+                    case 4:         //APP退出
+                        vip.setCode(String.valueOf(code));
+                        vip.setMsg(msg);
+                        vip.setEventId(String.valueOf(eveintId));
+                        new VIPCallBack_Servlet().execute(vip);
+                        break;
+                }
 
             }
 
@@ -84,16 +102,10 @@ public class ThirdPartyReceiver extends BroadcastReceiver implements IThirdParty
         }
     }
 
-    //退出登录
-//                HashMap params = new HashMap<String, Object>();
-//                params.put("channel", "");
-//                ThirdPartyAgent.getInstance().noticeClient(MyAppliaction.context, ThirdPartyAgent.EVENT_SERVER_LOGOUT, JsonUtils.addJsonValue(params));
-
-
     @Override
     public void getAccount(String channel, final IThirdPartyAuthCallback thirdPartyAuthCallback) {
         //fixme 由厂商实现的接口 成功获取到接口vuid,vtoken,accessToken必须通过data回调给视频客户端，需要视频处理的错误定义好提示文案放errTip中
-//        Toast.makeText(context, "正在为您提供会员服务", Toast.LENGTH_LONG).show();
+        Toast.makeText(context, "正在为您提供会员服务", Toast.LENGTH_LONG).show();
 
         try {
             thirdPartyAuthCallback.authInfo(0, "get vuid error", SaveUtils.getString(Save_Key.PARAMS)); //data需要返回vuid,vtoken,accesssToken
@@ -121,3 +133,4 @@ public class ThirdPartyReceiver extends BroadcastReceiver implements IThirdParty
     }
 
 }
+

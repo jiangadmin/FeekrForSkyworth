@@ -310,6 +310,7 @@ public class TurnOnEntity extends BaseEntity {
             private String updateTime;
             private int useState;
             private String zoomVal;
+            private int bussFlag;
 
             public String getAndroidVersion() {
                 return androidVersion;
@@ -422,6 +423,15 @@ public class TurnOnEntity extends BaseEntity {
             public void setZoomVal(String zoomVal) {
                 this.zoomVal = zoomVal;
             }
+
+            public int getBussFlag() {
+                return bussFlag;
+            }
+
+            public void setBussFlag(int bussFlag) {
+                this.bussFlag = bussFlag;
+            }
+
         }
 
         public static class LaunchBean {

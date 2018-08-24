@@ -48,7 +48,7 @@ public class GetVIP_Servlet extends AsyncTask<String, Integer, VIP_Entity> {
 
         VIP_Entity entity;
         //空判断
-        if (res != null && res.contains(",\"result\":\"\"")) {
+        if (!TextUtils.isEmpty(res) && res.contains(",\"result\":\"\"")) {
             res = res.replaceAll(",\"result\":\"\"", "");
         }
 
@@ -95,7 +95,7 @@ public class GetVIP_Servlet extends AsyncTask<String, Integer, VIP_Entity> {
             }
         } else {
 
-            if (Tools.isAppInstalled(MyApp.context,Const.TencentViedo)) {
+            if (Tools.isAppInstalled(MyApp.context, Const.TencentViedo)) {
 
                 //启动应用
                 LogUtil.e(TAG, "启动云视听");

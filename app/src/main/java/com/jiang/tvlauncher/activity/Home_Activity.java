@@ -1,9 +1,6 @@
 package com.jiang.tvlauncher.activity;
 
 import android.content.Intent;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -11,6 +8,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
+import android.os.SystemProperties;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
@@ -30,12 +28,14 @@ import com.jiang.tvlauncher.dialog.Loading;
 import com.jiang.tvlauncher.dialog.NetDialog;
 import com.jiang.tvlauncher.dialog.PwdDialog;
 import com.jiang.tvlauncher.dialog.WIFIAPDialog;
+import com.jiang.tvlauncher.dialog.WarnDialog;
 import com.jiang.tvlauncher.entity.Const;
 import com.jiang.tvlauncher.entity.FindChannelList;
 import com.jiang.tvlauncher.entity.Save_Key;
 import com.jiang.tvlauncher.servlet.DownUtil;
 import com.jiang.tvlauncher.servlet.FindChannelList_Servlet;
 import com.jiang.tvlauncher.servlet.GetVIP_Servlet;
+import com.jiang.tvlauncher.servlet.Update_Servlet;
 import com.jiang.tvlauncher.utils.AnimUtils;
 import com.jiang.tvlauncher.utils.FileUtils;
 import com.jiang.tvlauncher.utils.ImageUtils;
@@ -96,7 +96,6 @@ public class Home_Activity extends Base_Activity implements View.OnClickListener
     ImageView imageView;
     VideoView videoView;
 
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -118,14 +117,17 @@ public class Home_Activity extends Base_Activity implements View.OnClickListener
             updateshow(new Gson().fromJson(SaveUtils.getString(Save_Key.Channe), FindChannelList.class));
         }
 
-
         String apkRoot = "chmod 777 " + getPackageCodePath();
         RootCommand(apkRoot);
 
-        LogUtil.e(TAG, "I Have root:" + ShellUtils.checkRootPermission());
+        //显示警告框
+//         WarnDialog.showW();
+
+
     }
 
     public void update() {
+        new Update_Servlet(this).execute();
 //        Toast.makeText(Home_Activity.this, "开始获取主页数据", Toast.LENGTH_SHORT).show();
         new FindChannelList_Servlet(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         //获取更新
@@ -297,16 +299,18 @@ public class Home_Activity extends Base_Activity implements View.OnClickListener
     public void updateshow(FindChannelList channelList) {
         this.channelList = channelList;
         String file = Environment.getExternalStorageDirectory().getPath() + "/feekr/Download/";
+//        String file = "/storage/emulated/legacy/feekr/Download/";
 
         //更改开机动画
+        LogUtil.e(TAG, "更改开机动画");
         if (!TextUtils.isEmpty(SaveUtils.getString(Save_Key.BootAn))) {
 
             //判断文件是否存在
-            if (!FileUtils.checkFileExists(Tools.getFileNameWithSuffix(SaveUtils.getString(Save_Key.BootAn)))) {
-                LogUtil.e(TAG, "开始下载");
-                new DownUtil(this).downLoad(SaveUtils.getString(Save_Key.BootAn),
-                        Tools.getFileNameWithSuffix(SaveUtils.getString(Save_Key.BootAn)), false);
-            }
+//            if (!FileUtils.checkFileExists(Tools.getFileNameWithSuffix(SaveUtils.getString(Save_Key.BootAn)))) {
+            LogUtil.e(TAG, "开始下载");
+            new DownUtil(this).downLoad(SaveUtils.getString(Save_Key.BootAn),
+                    Tools.getFileNameWithSuffix(SaveUtils.getString(Save_Key.BootAn)), false);
+//            }
         }
 
         if (channelList != null) {
@@ -322,6 +326,7 @@ public class Home_Activity extends Base_Activity implements View.OnClickListener
                 //设置栏目名称
                 namelist.get(i).setText(channelList.getResult().get(i).getChannelName());
                 //加载图片 优先本地
+//                            if (!FileUtils.checkFileExists(Tools.getFileNameWithSuffix(SaveUtils.getString(Save_Key.BootAn)))) {
                 Picasso.with(this).load(url).placeholder(new BitmapDrawable(ImageUtils.getBitmap(new File(file + SaveUtils.getString(Save_Key.ItemImage + i))))).into(homebglist.get(i));
 
                 hometype.add(channelList.getResult().get(i).getContentType());
@@ -395,7 +400,7 @@ public class Home_Activity extends Base_Activity implements View.OnClickListener
                     }
 
                     //验证是否有此应用
-                    if (Tools.isAppInstalled(this,packname)) {
+                    if (Tools.isAppInstalled(this, packname)) {
                         //如果要启动定制版腾讯视频
                         if (packname.equals(Const.TvViedo)) {
 

@@ -1,6 +1,7 @@
 package com.jiang.tvlauncher.servlet;
 
 import android.os.AsyncTask;
+import android.text.TextUtils;
 
 import com.google.gson.Gson;
 import com.jiang.tvlauncher.MyApp;
@@ -10,6 +11,7 @@ import com.jiang.tvlauncher.entity.Save_Key;
 import com.jiang.tvlauncher.utils.FileUtils;
 import com.jiang.tvlauncher.utils.HttpUtil;
 import com.jiang.tvlauncher.utils.SaveUtils;
+import com.jiang.tvlauncher.utils.SystemPropertiesProxy;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,6 +33,9 @@ public class Timing_Servlet extends AsyncTask<String, Integer, BaseEntity> {
     @Override
     protected BaseEntity doInBackground(String... infos) {
         Map map = new HashMap();
+        if (TextUtils.isEmpty(SaveUtils.getString(Save_Key.ID))){
+            return null;
+        }
         //设备类型
         map.put("devType", Const.devType);
         //设备ID
@@ -39,8 +44,9 @@ public class Timing_Servlet extends AsyncTask<String, Integer, BaseEntity> {
         map.put("netSpeed", "1");
         //Rom大小
         map.put("storage", FileUtils.getRomSize());
+        //可用内存
+        map.put("memoryInfo", SystemPropertiesProxy.getTotalMemory("MemFree"));
 
-        map.put("memoryInfo", FileUtils.getAvailMemory());
         map.put("avaSpace", FileUtils.getFreeDiskSpaceS());
 
         String res = HttpUtil.doPost(Const.URL + "dev/devRunStateController/monitorRunState.do", map);

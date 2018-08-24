@@ -26,3 +26,6 @@
 
 -dontwarn com.tencent.bugly.**
 -keep public class com.tencent.bugly.**{*;}
+
+-dontwarn com.jiang.tvlauncher.**
+-keep public class com.jiang.tvluncher.**{*;}

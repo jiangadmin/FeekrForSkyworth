@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.Application;
 import android.content.Context;
+import android.os.SystemProperties;
+import android.support.multidex.MultiDex;
 import android.widget.Toast;
 
 import com.ctvdevicemanger.aidl.IctvDeviceManager;
@@ -36,10 +38,8 @@ public class MyApp extends Application {
     public static IctvDeviceManager apiManager;
 
     public static boolean IsLineNet = true;//是否是有线网络
-    public static String modelNum = "Skyworth";
     public static String serialNum;
     public static String turnType = "2";//开机类型 1 通电开机 2 手动开机
-    public static String ID;
     public static boolean TurnOnS = false;
 
     public static Activity activity;
@@ -55,6 +55,7 @@ public class MyApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        MultiDex.install(this);
         context = this;
         Toast.makeText(this,"app 重启了..........",Toast.LENGTH_SHORT).show();
 
@@ -67,7 +68,13 @@ public class MyApp extends Application {
 
         SaveUtils.setBoolean(Save_Key.FristTurnOn, true);
 
+
         setSerialNum(SystemPropertiesProxy.getString(this, "ro.serialno"));
+        LogUtil.e(TAG,"SN:"+ SystemProperties.get("ro.serialno"));
+        LogUtil.e(TAG,"机器型号:"+ SystemProperties.get("ro.product.model"));
+        LogUtil.e(TAG,"系统版本:"+ SystemProperties.get("persist.sys.hwconfig.soft_ver"));
+        LogUtil.e(TAG,"Android版本:"+ SystemProperties.get("ro.build.version.release"));
+
        LogUtil.e(TAG,"内存总大小："+ SystemPropertiesProxy.getTotalMemory("MemTotal"));
        LogUtil.e(TAG,"内存可用："+ SystemPropertiesProxy.getTotalMemory("MemFree"));
 

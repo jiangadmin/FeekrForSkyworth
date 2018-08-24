@@ -35,6 +35,10 @@ public class Update_Servlet extends AsyncTask<String, Integer, UpdateEntity> {
         Map map = new HashMap();
         map.put("versionNum", Tools.getVersionName(MyApp.context));
         map.put("buildNum", String.valueOf(Tools.getVersionCode(MyApp.context)));
+        //设备类型
+        map.put("devType", Const.devType);
+        //设备SN
+        map.put("serialNum", MyApp.getSerialNum());
 
         String res = HttpUtil.doPost(Const.URL + "cms/appVersionController/findNewVersion.do", map);
 
@@ -65,10 +69,7 @@ public class Update_Servlet extends AsyncTask<String, Integer, UpdateEntity> {
                 Loading.show(activity, "安装中");
                 new DownUtil(activity).downLoad(entity.getResult().getDownloadUrl(),"Feekr"+entity.getResult().getVersionNum()+".apk",true);
             }
-        } else if (entity.getErrorcode() == 15) {
-//            Toast.makeText(activity, TAG+entity.getErrormsg(), Toast.LENGTH_SHORT).show();
-        } else {
-
         }
+        return;
     }
 }

@@ -11,6 +11,7 @@ import com.google.gson.Gson;
 import com.jiang.tvlauncher.MyApp;
 import com.jiang.tvlauncher.activity.Home_Activity;
 import com.jiang.tvlauncher.dialog.Loading;
+import com.jiang.tvlauncher.dialog.WarnDialog;
 import com.jiang.tvlauncher.entity.Const;
 import com.jiang.tvlauncher.entity.Point;
 import com.jiang.tvlauncher.entity.Save_Key;
@@ -55,7 +56,7 @@ public class TurnOn_servlet extends AsyncTask<String, Integer, TurnOnEntity> {
         //开机类型
         map.put("turnType", MyApp.turnType);
 
-        map.put("modelNum", MyApp.modelNum);
+        map.put("modelNum",  SystemPropertiesProxy.getString(context, "ro.product.model"));
 
         map.put("systemVersion", SystemPropertiesProxy.getString(context, "persist.sys.hwconfig.soft_ver"));
         map.put("androidVersion", SystemPropertiesProxy.getString(context, "ro.build.version.release"));
@@ -235,12 +236,16 @@ public class TurnOn_servlet extends AsyncTask<String, Integer, TurnOnEntity> {
         Const.Nets = false;
         Loading.dismiss();
 
+
         switch (entity.getErrorcode()) {
             case 1000:
                 if (MyApp.activity != null && MyApp.activity.getClass() == Home_Activity.class) {
                     ((Home_Activity) MyApp.activity).update();
                 }
                 break;
+        }
+        if(entity.getResult().getDevInfo().getBussFlag() == 0){
+            WarnDialog.showW();
         }
 
     }
@@ -261,7 +266,6 @@ public class TurnOn_servlet extends AsyncTask<String, Integer, TurnOnEntity> {
             num++;
             //再次启动
             new TurnOn_servlet(context).execute();
-
 
         }
 
