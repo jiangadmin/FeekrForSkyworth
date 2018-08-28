@@ -26,7 +26,7 @@ public class Setting_Activity extends Base_Activity implements View.OnClickListe
     private static final String TAG = "Setting_Activity";
 
     //商店  互联 媒体中心  网络 检测更新  设置
-    LinearLayout setting1, setting2, setting3, setting4, setting5, setting6;
+    LinearLayout   setting3, setting4, setting5, setting6;
 
     public static void start(Context context) {
         Intent intent = new Intent();
@@ -38,7 +38,6 @@ public class Setting_Activity extends Base_Activity implements View.OnClickListe
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
-        MyApp.activity = this;
 
         initview();
         initeven();
@@ -46,8 +45,6 @@ public class Setting_Activity extends Base_Activity implements View.OnClickListe
     }
 
     private void initview() {
-        setting1 = findViewById(R.id.setting_1);
-        setting2 = findViewById(R.id.setting_2);
         setting3 = findViewById(R.id.setting_3);
         setting4 = findViewById(R.id.setting_4);
         setting5 = findViewById(R.id.setting_5);
@@ -55,8 +52,8 @@ public class Setting_Activity extends Base_Activity implements View.OnClickListe
     }
 
     private void initeven() {
-        setting1.setOnClickListener(this);
-        setting2.setOnClickListener(this);
+
+
         setting3.setOnClickListener(this);
         setting4.setOnClickListener(this);
         setting5.setOnClickListener(this);
@@ -66,14 +63,7 @@ public class Setting_Activity extends Base_Activity implements View.OnClickListe
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            //网络设置
-            case R.id.setting_1:
-                startActivity(new Intent(getPackageManager().getLaunchIntentForPackage("com.mipt.store")));
-                break;
-            //蓝牙设置
-            case R.id.setting_2:
-                startActivity(new Intent(getPackageManager().getLaunchIntentForPackage("com.skyworthdigital.skywechatclient")));
-                break;
+
             //梯形校正
             case R.id.setting_3:
                 startActivity(new Intent(getPackageManager().getLaunchIntentForPackage("com.skyworthdigital.skymediacenter")));

@@ -45,7 +45,7 @@ public class NewAPPList_Activity extends Base_Activity implements AdapterView.On
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_applist);
-        MyApp.activity = this;
+
         initview();
         initeven();
 

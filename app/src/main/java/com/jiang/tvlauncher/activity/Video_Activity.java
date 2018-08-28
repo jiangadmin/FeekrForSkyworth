@@ -46,7 +46,6 @@ public class Video_Activity extends Base_Activity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video);
-        MyApp.activity = this;
         videoView =  findViewById(R.id.videoView);
 
         String videof = Environment.getExternalStorageDirectory().getPath() + "/feekr/Download/" + SaveUtils.getString(Save_Key.NewImageName);

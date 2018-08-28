@@ -21,6 +21,8 @@ public class Const {
 
     public static int seconds = 300;      //间隔时间
 
+    public static int BussFlag = 1;      //账户状态
+
     public static int FindChannelList = 0;
 
     public static boolean IsGetVip = false;  //本次开机时候获取过Vip

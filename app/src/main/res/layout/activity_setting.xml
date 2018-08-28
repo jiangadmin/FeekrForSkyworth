@@ -4,117 +4,20 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-   <com.jiang.tvlauncher.view.TitleView
+    <com.jiang.tvlauncher.view.TitleView
         android:layout_width="match_parent"
-        android:layout_height="42dp"/>
+        android:layout_height="42dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:orientation="horizontal">
-
-        <LinearLayout
-            android:id="@+id/setting_1"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/sel_main_focus"
-            android:focusable="true"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <ImageView
-                android:layout_marginBottom="20dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_setting_store" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="应用商店"
-                android:textColor="@color/white"
-                android:textSize="26sp" />
-
-        </LinearLayout>
-
-        <ImageView
-            android:layout_width="0.5dp"
-            android:background="@drawable/line_v1"
-            android:layout_height="match_parent" />
-
-        <LinearLayout
-            android:id="@+id/setting_2"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/sel_main_focus"
-            android:focusable="true"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <ImageView
-                android:layout_marginBottom="20dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_setting_wechat" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="微信互联"
-                android:textColor="@color/white"
-                android:textSize="26sp" />
-
-        </LinearLayout>
-
-        <ImageView
-            android:layout_width="0.5dp"
-            android:background="@drawable/line_v1"
-            android:layout_height="match_parent" />
-        <LinearLayout
-            android:id="@+id/setting_3"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/sel_main_focus"
-            android:focusable="true"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <ImageView
-                android:layout_marginBottom="20dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_setting_usb" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="媒体中心"
-                android:textColor="@color/white"
-                android:textSize="26sp" />
-
-        </LinearLayout>
-
-    </LinearLayout>
-
-    <ImageView
-        android:layout_width="match_parent"
-        android:background="@drawable/line_h"
-        android:layout_height="0.5dp" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
         android:orientation="horizontal">
 
         <LinearLayout
             android:id="@+id/setting_4"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_margin="5dp"
             android:layout_weight="1"
             android:background="@drawable/sel_main_focus"
             android:focusable="true"
@@ -122,9 +25,9 @@
             android:orientation="vertical">
 
             <ImageView
-                android:layout_marginBottom="20dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
                 android:src="@drawable/ic_setting_wifi" />
 
             <TextView
@@ -138,13 +41,14 @@
 
         <ImageView
             android:layout_width="0.5dp"
-            android:background="@drawable/line_v2"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:background="@drawable/line_w" />
 
         <LinearLayout
-            android:id="@+id/setting_5"
+            android:id="@+id/setting_3"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_margin="5dp"
             android:layout_weight="1"
             android:background="@drawable/sel_main_focus"
             android:focusable="true"
@@ -152,9 +56,40 @@
             android:orientation="vertical">
 
             <ImageView
-                android:layout_marginBottom="20dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:src="@drawable/ic_setting_usb" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="媒体中心"
+                android:textColor="@color/white"
+                android:textSize="26sp" />
+
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="0.5dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/line_w" />
+
+        <LinearLayout
+            android:id="@+id/setting_5"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="5dp"
+            android:layout_weight="1"
+            android:background="@drawable/sel_main_focus"
+            android:focusable="true"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
                 android:src="@drawable/ic_setting_update" />
 
             <TextView
@@ -168,13 +103,14 @@
 
         <ImageView
             android:layout_width="0.5dp"
-            android:background="@drawable/line_v2"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:background="@drawable/line_w" />
 
         <LinearLayout
             android:id="@+id/setting_6"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_margin="5dp"
             android:layout_weight="1"
             android:background="@drawable/sel_main_focus"
             android:focusable="true"
@@ -182,9 +118,9 @@
             android:orientation="vertical">
 
             <ImageView
-                android:layout_marginBottom="20dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
                 android:src="@drawable/ic_sett" />
 
             <TextView
@@ -197,6 +133,5 @@
         </LinearLayout>
 
     </LinearLayout>
-
 
 </LinearLayout>

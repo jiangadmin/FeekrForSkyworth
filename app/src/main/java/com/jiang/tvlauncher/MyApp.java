@@ -3,14 +3,17 @@ package com.jiang.tvlauncher;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.Application;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.os.SystemProperties;
 import android.support.multidex.MultiDex;
+import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
 
 import com.ctvdevicemanger.aidl.IctvDeviceManager;
 import com.jiang.tvlauncher.entity.Save_Key;
-import com.jiang.tvlauncher.servlet.Timing_Servlet;
 import com.jiang.tvlauncher.servlet.TurnOn_servlet;
 import com.jiang.tvlauncher.utils.LogUtil;
 import com.jiang.tvlauncher.utils.SaveUtils;
@@ -44,6 +47,8 @@ public class MyApp extends Application {
 
     public static Activity activity;
 
+    private NotificationManager manager;
+
     public static String getSerialNum() {
         return serialNum;
     }
@@ -57,7 +62,7 @@ public class MyApp extends Application {
         super.onCreate();
         MultiDex.install(this);
         context = this;
-        Toast.makeText(this,"app 重启了..........",Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "app 重启了..........", Toast.LENGTH_SHORT).show();
 
         //崩溃检测
         CrashReport.initCrashReport(getApplicationContext(), "b9c56f18c1", false);
@@ -70,20 +75,29 @@ public class MyApp extends Application {
 
 
         setSerialNum(SystemPropertiesProxy.getString(this, "ro.serialno"));
-        LogUtil.e(TAG,"SN:"+ SystemProperties.get("ro.serialno"));
-        LogUtil.e(TAG,"机器型号:"+ SystemProperties.get("ro.product.model"));
-        LogUtil.e(TAG,"系统版本:"+ SystemProperties.get("persist.sys.hwconfig.soft_ver"));
-        LogUtil.e(TAG,"Android版本:"+ SystemProperties.get("ro.build.version.release"));
+        LogUtil.e(TAG, "SN:" + SystemProperties.get("ro.serialno"));
+        LogUtil.e(TAG, "机器型号:" + SystemProperties.get("ro.product.model"));
+        LogUtil.e(TAG, "系统版本:" + SystemProperties.get("persist.sys.hwconfig.soft_ver"));
+        LogUtil.e(TAG, "Android版本:" + SystemProperties.get("ro.build.version.release"));
 
-       LogUtil.e(TAG,"内存总大小："+ SystemPropertiesProxy.getTotalMemory("MemTotal"));
-       LogUtil.e(TAG,"内存可用："+ SystemPropertiesProxy.getTotalMemory("MemFree"));
+        LogUtil.e(TAG, "内存总大小：" + SystemPropertiesProxy.getTotalMemory("MemTotal"));
+        LogUtil.e(TAG, "内存可用：" + SystemPropertiesProxy.getTotalMemory("MemFree"));
 
         LogUtil.e(TAG, "机器型号:" + SystemPropertiesProxy.getString(this, "ro.product.model"));
         LogUtil.e(TAG, "系统版本:" + SystemPropertiesProxy.getString(this, "persist.sys.hwconfig.soft_ver"));
         LogUtil.e(TAG, "Android版本:" + SystemPropertiesProxy.getString(this, "ro.build.version.release"));
 
         new TurnOn_servlet(this).execute();
-        new Timing_Servlet().execute();
+
+        manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        Notification notification = new NotificationCompat.Builder(context)
+                .setSmallIcon(R.drawable.feekr)
+                .setTicker("feekr正在运行中").setContentInfo("feekr正在运行中")
+                .setContentTitle("feekr正在运行中").setContentText("feekr正在运行中")
+                .setAutoCancel(true).setDefaults(Notification.DEFAULT_ALL)
+                .build();
+        manager.notify(1, notification);
 
     }
 

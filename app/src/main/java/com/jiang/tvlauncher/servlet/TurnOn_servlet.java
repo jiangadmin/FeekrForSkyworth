@@ -3,7 +3,6 @@ package com.jiang.tvlauncher.servlet;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.CountDownTimer;
 import android.text.TextUtils;
 
@@ -11,9 +10,7 @@ import com.google.gson.Gson;
 import com.jiang.tvlauncher.MyApp;
 import com.jiang.tvlauncher.activity.Home_Activity;
 import com.jiang.tvlauncher.dialog.Loading;
-import com.jiang.tvlauncher.dialog.WarnDialog;
 import com.jiang.tvlauncher.entity.Const;
-import com.jiang.tvlauncher.entity.Point;
 import com.jiang.tvlauncher.entity.Save_Key;
 import com.jiang.tvlauncher.entity.TurnOnEntity;
 import com.jiang.tvlauncher.server.TimingService;
@@ -56,7 +53,7 @@ public class TurnOn_servlet extends AsyncTask<String, Integer, TurnOnEntity> {
         //开机类型
         map.put("turnType", MyApp.turnType);
 
-        map.put("modelNum",  SystemPropertiesProxy.getString(context, "ro.product.model"));
+        map.put("modelNum", SystemPropertiesProxy.getString(context, "ro.product.model"));
 
         map.put("systemVersion", SystemPropertiesProxy.getString(context, "persist.sys.hwconfig.soft_ver"));
         map.put("androidVersion", SystemPropertiesProxy.getString(context, "ro.build.version.release"));
@@ -129,44 +126,6 @@ public class TurnOn_servlet extends AsyncTask<String, Integer, TurnOnEntity> {
                     }
                 }
 
-            String s = entity.getResult().getDevInfo().getZoomVal();
-            LogUtil.e(TAG, "梯形数据:" + s);
-
-            try {
-                //初始化设备名称
-//                MyAppliaction.apiManager.set("setDeviceName", entity.getResult().getDevInfo().getModelNum(), null, null, null);
-
-                //初始化上电开机
-                if (entity.getResult().getShadowcnf() != null) {
-
-                    //投影方式开关
-                    if (entity.getResult().getShadowcnf().getProjectModeFlag() == 1) {
-//                        MyAppliaction.apiManager.set("setProjectionMode", String.valueOf(entity.getResult().getShadowcnf().getProjectMode()), null, null, null);
-                    }
-
-                    //上电开机开关
-                    if (entity.getResult().getShadowcnf().getPowerFlag() == 1) {
-                        //上电开机
-                        if (entity.getResult().getShadowcnf().getPowerTurn() == 1) {
-//                            MyAppliaction.apiManager.set("setPowerOnStart", "true", null, null, null);
-                        } else {
-//                            MyAppliaction.apiManager.set("setPowerOnStart", "false", null, null, null);
-                        }
-                    }
-
-                    //梯形校正开关
-                    if (entity.getResult().getShadowcnf().getZoomFlag() == 1) {
-                        //初始化梯形数据
-                        Point point = new Gson().fromJson(s, Point.class);
-                        for (int i = 0; i < point.getPoint().size(); i++) {
-//                            MyAppliaction.apiManager.set("setKeyStoneByPoint", point.getPoint().get(i).getIdx(), point.getPoint().get(i).getCurrent_x(), point.getPoint().get(i).getCurrent_y(), null);
-                        }
-                    }
-                }
-            } catch (Exception e) {
-                LogUtil.e(TAG, e.getMessage());
-            }
-
             //存储间隔时间
             if (entity.getResult().getShadowcnf() != null)
                 SaveUtils.setInt(Save_Key.Timming, entity.getResult().getShadowcnf().getMonitRate());
@@ -175,8 +134,7 @@ public class TurnOn_servlet extends AsyncTask<String, Integer, TurnOnEntity> {
             context.startService(new Intent(context, TimingService.class));
 
             //获取开屏
-            new FindLanunch_Servlet().execute();
-            LogUtil.e(TAG, "触发");
+            new FindLanunch_Servlet().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
             //判断是否是有线连接 & 服务启用同步数据
             if (Tools.isLineConnected() && entity.getResult().getShadowcnf() != null
@@ -195,7 +153,7 @@ public class TurnOn_servlet extends AsyncTask<String, Integer, TurnOnEntity> {
 
                     LogUtil.e(TAG, "SSID:" + SSID + "  PassWord:" + APPWD);
 
-                    WifiApUtils.getInstance(context).openWifiAp(SSID,APPWD);
+                    WifiApUtils.getInstance(context).openWifiAp(SSID, APPWD);
 
                     //打开并设置热点信息.注意热点密码8-32位，只限制了英文密码位数。
                     //使用极米开启/关闭热点接口
@@ -207,8 +165,8 @@ public class TurnOn_servlet extends AsyncTask<String, Integer, TurnOnEntity> {
 //                    } catch (RemoteException e) {
 //                        e.printStackTrace();
 //                    }
-                } else if (entity.getResult().getShadowcnf().getHotPoint() == 0) {            //关闭热点
-
+                } else if (entity.getResult().getShadowcnf().getHotPoint() == 0) {
+                    //关闭热点
                     WifiApUtils.getInstance(context).closeWifiAp();
 //                    try {
 //                        MyAppliaction.apiManager.set("setCloseWifiAp", null, null, null, null);
@@ -239,13 +197,15 @@ public class TurnOn_servlet extends AsyncTask<String, Integer, TurnOnEntity> {
 
         switch (entity.getErrorcode()) {
             case 1000:
+
+
                 if (MyApp.activity != null && MyApp.activity.getClass() == Home_Activity.class) {
                     ((Home_Activity) MyApp.activity).update();
                 }
+
+
+
                 break;
-        }
-        if(entity.getResult().getDevInfo().getBussFlag() == 0){
-            WarnDialog.showW();
         }
 
     }

@@ -11,12 +11,13 @@
         android:background="@color/title_bg">
 
         <ImageView
-            android:layout_width="wrap_content"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
             android:gravity="center"
-            />
+            android:src="@mipmap/ktcp_logo" />
+
         <!--日期-->
         <TextView
             android:id="@+id/title_bar_date"
@@ -72,6 +73,9 @@
                 android:text="控制台"
                 android:textColor="@color/gray"
                 android:textSize="18sp" />
+
         </LinearLayout>
+
     </RelativeLayout>
+
 </RelativeLayout>
