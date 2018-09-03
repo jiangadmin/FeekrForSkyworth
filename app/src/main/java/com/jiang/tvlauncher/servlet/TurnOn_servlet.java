@@ -21,6 +21,8 @@ import com.jiang.tvlauncher.utils.SystemPropertiesProxy;
 import com.jiang.tvlauncher.utils.Tools;
 import com.jiang.tvlauncher.utils.WifiApUtils;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -111,18 +113,10 @@ public class TurnOn_servlet extends AsyncTask<String, Integer, TurnOnEntity> {
                 if (entity.getResult().getLaunch().getLaunchType() == 1) {
                     //非空判断
                     if (!TextUtils.isEmpty(entity.getResult().getLaunch().getMediaUrl())) {
-                        //图片
-                        if (entity.getResult().getLaunch().getMediaType() == 1) {
-                            SaveUtils.setBoolean(Save_Key.NewImage, true);
-                            SaveUtils.setBoolean(Save_Key.NewVideo, false);
-                            SaveUtils.setString(Save_Key.NewImageUrl, entity.getResult().getLaunch().getMediaUrl());
-                        }
-                        //视频
-                        if (entity.getResult().getLaunch().getMediaType() == 2) {
-                            SaveUtils.setBoolean(Save_Key.NewVideo, true);
-                            SaveUtils.setBoolean(Save_Key.NewImage, false);
-                            SaveUtils.setString(Save_Key.NewVideoUrl, entity.getResult().getLaunch().getMediaUrl());
-                        }
+
+                        SaveUtils.setBoolean(Save_Key.NewImage, entity.getResult().getLaunch().getMediaType() == 1);
+                        SaveUtils.setBoolean(Save_Key.NewVideo, entity.getResult().getLaunch().getMediaType() == 2);
+
                     }
                 }
 
@@ -132,9 +126,6 @@ public class TurnOn_servlet extends AsyncTask<String, Integer, TurnOnEntity> {
 
             //启动定时服务
             context.startService(new Intent(context, TimingService.class));
-
-            //获取开屏
-            new FindLanunch_Servlet().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
             //判断是否是有线连接 & 服务启用同步数据
             if (Tools.isLineConnected() && entity.getResult().getShadowcnf() != null
@@ -153,26 +144,13 @@ public class TurnOn_servlet extends AsyncTask<String, Integer, TurnOnEntity> {
 
                     LogUtil.e(TAG, "SSID:" + SSID + "  PassWord:" + APPWD);
 
+                    //开启热点
                     WifiApUtils.getInstance(context).openWifiAp(SSID, APPWD);
 
-                    //打开并设置热点信息.注意热点密码8-32位，只限制了英文密码位数。
-                    //使用极米开启/关闭热点接口
-//                    try {
-//                        String s1 = MyAppliaction.apiManager.set("setOpenWifiAp", SSID, APPWD, null, null);
-//                        if (!TextUtils.isEmpty(s1) && Boolean.valueOf(s1.toLowerCase())) {
-//                            LogUtil.e(TAG, "热点开机成功！");
-//                        }
-//                    } catch (RemoteException e) {
-//                        e.printStackTrace();
-//                    }
                 } else if (entity.getResult().getShadowcnf().getHotPoint() == 0) {
                     //关闭热点
                     WifiApUtils.getInstance(context).closeWifiAp();
-//                    try {
-//                        MyAppliaction.apiManager.set("setCloseWifiAp", null, null, null, null);
-//                    } catch (RemoteException e) {
-//                        e.printStackTrace();
-//                    }
+
                 }
             }
 
@@ -198,13 +176,7 @@ public class TurnOn_servlet extends AsyncTask<String, Integer, TurnOnEntity> {
         switch (entity.getErrorcode()) {
             case 1000:
 
-
-                if (MyApp.activity != null && MyApp.activity.getClass() == Home_Activity.class) {
-                    ((Home_Activity) MyApp.activity).update();
-                }
-
-
-
+                EventBus.getDefault().post("update");
                 break;
         }
 

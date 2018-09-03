@@ -119,15 +119,13 @@ public class Home_Activity extends Base_Activity implements View.OnClickListener
         if (!Tools.isNetworkConnected())
             NetDialog.showL();
 
-        update();
+        onMessage("update");
 
         //首先显示本地资源
         if (!TextUtils.isEmpty(SaveUtils.getString(Save_Key.Channe))) {
             updateshow(new Gson().fromJson(SaveUtils.getString(Save_Key.Channe), FindChannelList.class));
         }
 
-        String apkRoot = "chmod 777 " + getPackageCodePath();
-        RootCommand(apkRoot);
 
     }
 
@@ -151,20 +149,18 @@ public class Home_Activity extends Base_Activity implements View.OnClickListener
                     warningDialog.dismiss();
                 }
                 break;
+            case "update":
+
+                //检查更新
+                new Update_Servlet(this).execute();
+                new FindChannelList_Servlet(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+                break;
             default:
                 break;
         }
     }
 
-    public void update() {
-
-
-        new Update_Servlet(this).execute();
-//        Toast.makeText(Home_Activity.this, "开始获取主页数据", Toast.LENGTH_SHORT).show();
-        new FindChannelList_Servlet(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        //获取更新
-//        new Update_Servlet(this).execute();
-    }
 
     private void initview() {
 
