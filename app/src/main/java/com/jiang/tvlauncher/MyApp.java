@@ -33,12 +33,10 @@ import java.util.List;
  */
 
 public class MyApp extends Application {
-
     private static final String TAG = "MyAppliaction";
+
     public static boolean LogShow = true;
     public static Context context;
-
-    public static IctvDeviceManager apiManager;
 
     public static boolean IsLineNet = true;//是否是有线网络
     public static String serialNum;
@@ -50,19 +48,16 @@ public class MyApp extends Application {
     private NotificationManager manager;
 
     public static String getSerialNum() {
-        return serialNum;
+        return SystemPropertiesProxy.getString(context, "ro.serialno");
     }
 
-    public static void setSerialNum(String serialNum) {
-        MyApp.serialNum = serialNum;
-    }
 
     @Override
     public void onCreate() {
         super.onCreate();
         MultiDex.install(this);
         context = this;
-        //Toast.makeText(this, "app 重启了..........", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "TvLauncher cnCreate", Toast.LENGTH_SHORT).show();
 
         //崩溃检测
         CrashReport.initCrashReport(getApplicationContext(), "b9c56f18c1", false);
@@ -73,8 +68,6 @@ public class MyApp extends Application {
 
         SaveUtils.setBoolean(Save_Key.FristTurnOn, true);
 
-
-        setSerialNum(SystemPropertiesProxy.getString(this, "ro.serialno"));
         LogUtil.e(TAG, "SN:" + SystemProperties.get("ro.serialno"));
         LogUtil.e(TAG, "机器型号:" + SystemProperties.get("ro.product.model"));
         LogUtil.e(TAG, "系统版本:" + SystemProperties.get("persist.sys.hwconfig.soft_ver"));
@@ -101,21 +94,4 @@ public class MyApp extends Application {
 
     }
 
-    /**
-     * 当前应用是否处于前台
-     *
-     * @return
-     */
-    public static boolean isForeground() {
-        ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-        List<ActivityManager.RunningAppProcessInfo> processes = activityManager.getRunningAppProcesses();
-        for (ActivityManager.RunningAppProcessInfo processInfo : processes) {
-            if (processInfo.processName.equals(context.getPackageName())) {
-                if (processInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
 }
