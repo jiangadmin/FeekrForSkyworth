@@ -312,8 +312,8 @@ public class Home_Activity extends Base_Activity implements View.OnClickListener
         super.onResume();
 
         if (toolbar_show) {
-            AnimUtils.animupnum(this, toolbar_view, 0, -42);
-            AnimUtils.animupnum(this, titleview, -42, 0);
+            AnimUtils.Y(toolbar_view, 0, -42);
+            AnimUtils.Y(titleview, -42, 0);
             toolbar_view.setVisibility(View.GONE);
             toolbar_show = false;
         }

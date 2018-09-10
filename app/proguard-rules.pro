@@ -29,3 +29,4 @@
 
 -dontwarn com.jiang.tvlauncher.**
 -keep public class com.jiang.tvluncher.**{*;}
+-keep public class *extends java.lang.annotation.Annotation{*;}
