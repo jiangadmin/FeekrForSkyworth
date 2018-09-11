@@ -23,36 +23,13 @@ public class Base_Activity extends Activity {
 
     public void enlargeAnim(View v) {
         AnimUtils.S(v, 1, 1.2F);
-//        Animation a = AnimationUtils.loadAnimation(v.getContext(), R.anim.uikit_enlarge);
-//        a.setAnimationListener(new Animation.AnimationListener() {
-//
-//            @Override
-//            public void onAnimationStart(Animation animation) {
-//            }
-//
-//            @Override
-//            public void onAnimationRepeat(Animation animation) {
-//
-//            }
-//
-//            @Override
-//            public void onAnimationEnd(Animation animation) {
-//            }
-//        });
-//        a.setFillAfter(true);
-//        v.clearAnimation();
-//        v.setAnimation(a);
-//        a.start();
+
     }
 
     public void reduceAnim(View v) {
 
         AnimUtils.S(v, 1.2F, 1);
-//        Animation a = AnimationUtils.loadAnimation(v.getContext(), R.anim.uikit_reduce);
-//        a.setFillAfter(true);
-//        v.clearAnimation();
-//        v.startAnimation(a);
-//        a.start();
+
     }
 
 }

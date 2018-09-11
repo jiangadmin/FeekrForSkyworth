@@ -4,9 +4,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.RemoteException;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.jiang.tvlauncher.entity.Const;
 import com.jiang.tvlauncher.entity.Save_Key;
 import com.jiang.tvlauncher.servlet.VIPCallBack_Servlet;
 import com.jiang.tvlauncher.utils.LogUtil;
@@ -63,7 +65,7 @@ public class ThirdPartyReceiver extends BroadcastReceiver implements IThirdParty
                 }
 
                 // 2 账户登录回调 3 退出登录 4 APP退出
-                LogUtil.e(TAG,"状态码："+eveintId);
+                LogUtil.e(TAG, "状态码：" + eveintId);
                 //Toast.makeText(context, "状态码："+eveintId, Toast.LENGTH_SHORT).show();
                 VIPCallBack_Servlet.TencentVip vip = new VIPCallBack_Servlet.TencentVip();
                 switch (eveintId) {
@@ -108,11 +110,17 @@ public class ThirdPartyReceiver extends BroadcastReceiver implements IThirdParty
         Toast.makeText(context, "正在为您提供会员服务", Toast.LENGTH_LONG).show();
 
         try {
-            thirdPartyAuthCallback.authInfo(0, "get vuid error", SaveUtils.getString(Save_Key.PARAMS)); //data需要返回vuid,vtoken,accesssToken
+            int vuid = 0;
+            if (!TextUtils.isEmpty(Const.ktcp_vuid)) {
+                vuid = Integer.getInteger(Const.ktcp_vuid, 0);
+            }
+            String vtoken = "get vuid error";
+            String accessToken = SaveUtils.getString(Save_Key.PARAMS);
+            thirdPartyAuthCallback.authInfo(vuid, vtoken, accessToken); //data需要返回vuid,vtoken,accesssToken
         } catch (RemoteException e) {
             e.printStackTrace();
+            LogUtil.e(TAG, e.getMessage());
         }
-
 
     }
 

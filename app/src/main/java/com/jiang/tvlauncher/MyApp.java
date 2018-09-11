@@ -57,7 +57,7 @@ public class MyApp extends Application {
         super.onCreate();
         MultiDex.install(this);
         context = this;
-        Toast.makeText(this, "TvLauncher onCreate", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, "TvLauncher onCreate", Toast.LENGTH_SHORT).show();
 
         //崩溃检测
         CrashReport.initCrashReport(getApplicationContext(), "b9c56f18c1", false);
