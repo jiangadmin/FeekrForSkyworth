@@ -1,10 +1,12 @@
 package com.jiang.tvlauncher.servlet;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.jiang.tvlauncher.MyApp;
 import com.jiang.tvlauncher.entity.Const;
 import com.jiang.tvlauncher.entity.MonitorResEntity;
 import com.jiang.tvlauncher.entity.Save_Key;
@@ -78,10 +80,19 @@ public class Timing_Servlet extends AsyncTask<String, Integer, MonitorResEntity>
                 if (entity.getResult().getBussFlag() == 0) {
 
                     Const.BussFlag = 0;
+
                     try {
                         ShellUtils.execCommand("input keyevent 3", false);
                     } catch (Exception ex) {
                         Log.e(TAG, "onPostExecute: " + ex.getMessage());
+
+                        Intent backHome = new Intent(Intent.ACTION_MAIN);
+
+                        backHome.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                        backHome.addCategory(Intent.CATEGORY_HOME);
+
+                        MyApp.context.startActivity(backHome);
                     }
 
                 } else if (entity.getResult().getBussFlag() == 1) {
