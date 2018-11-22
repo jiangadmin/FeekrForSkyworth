@@ -1,18 +1,14 @@
 package com.jiang.tvlauncher;
 
 import android.app.Activity;
-import android.app.ActivityManager;
 import android.app.Application;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
-import android.content.res.Configuration;
 import android.os.SystemProperties;
-import android.support.multidex.MultiDex;
+import android.support.multidex.MultiDexApplication;
 import android.support.v4.app.NotificationCompat;
-import android.widget.Toast;
 
-import com.ctvdevicemanger.aidl.IctvDeviceManager;
 import com.jiang.tvlauncher.entity.Save_Key;
 import com.jiang.tvlauncher.servlet.TurnOn_servlet;
 import com.jiang.tvlauncher.utils.LogUtil;
@@ -20,8 +16,6 @@ import com.jiang.tvlauncher.utils.SaveUtils;
 import com.jiang.tvlauncher.utils.SystemPropertiesProxy;
 import com.jiang.tvlauncher.utils.Tools;
 import com.tencent.bugly.crashreport.CrashReport;
-
-import java.util.List;
 
 /**
  * Created by  jiang
@@ -32,7 +26,7 @@ import java.util.List;
  * update：
  */
 
-public class MyApp extends Application {
+public class MyApp extends MultiDexApplication {
     private static final String TAG = "MyAppliaction";
 
     public static boolean LogShow = true;
@@ -51,11 +45,10 @@ public class MyApp extends Application {
         return SystemPropertiesProxy.getString(context, "ro.serialno");
     }
 
-
     @Override
     public void onCreate() {
         super.onCreate();
-        MultiDex.install(this);
+
         context = this;
 //        Toast.makeText(this, "TvLauncher onCreate", Toast.LENGTH_SHORT).show();
 
