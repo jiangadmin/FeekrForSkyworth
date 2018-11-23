@@ -29,6 +29,7 @@ public class Save_Key {
     public static String PARAMS = "params";
 
     public static String ItemImage = "ItemImage";
+    public static final String Theme = "Theme";
 
     public static String BootAn = "BootAn";
 

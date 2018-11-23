@@ -15,7 +15,9 @@ import android.graphics.LinearGradient;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
+import android.graphics.PorterDuff;
 import android.graphics.PorterDuff.Mode;
+import android.graphics.PorterDuffColorFilter;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
@@ -1326,4 +1328,24 @@ public class ImageUtils {
             return null;
         }
     }
+
+    /**
+     * 动态修改图片颜色 纯色
+     *
+     * @param inBitmap
+     * @param tintColor
+     * @return
+     */
+    public static Bitmap tintBitmap(Bitmap inBitmap, int tintColor) {
+        if (inBitmap == null) {
+            return null;
+        }
+        Bitmap outBitmap = Bitmap.createBitmap(inBitmap.getWidth(), inBitmap.getHeight(), inBitmap.getConfig());
+        Canvas canvas = new Canvas(outBitmap);
+        Paint paint = new Paint();
+        paint.setColorFilter(new PorterDuffColorFilter(tintColor, PorterDuff.Mode.SRC_IN));
+        canvas.drawBitmap(inBitmap, 0, 0, paint);
+        return outBitmap;
+    }
+
 }

@@ -5,7 +5,6 @@ import android.os.CountDownTimer;
 import android.text.TextUtils;
 
 import com.google.gson.Gson;
-import com.jiang.tvlauncher.activity.Home_Activity;
 import com.jiang.tvlauncher.dialog.Loading;
 import com.jiang.tvlauncher.entity.Const;
 import com.jiang.tvlauncher.entity.FindChannelList;
@@ -13,6 +12,8 @@ import com.jiang.tvlauncher.entity.Save_Key;
 import com.jiang.tvlauncher.utils.HttpUtil;
 import com.jiang.tvlauncher.utils.LogUtil;
 import com.jiang.tvlauncher.utils.SaveUtils;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,33 +27,24 @@ import java.util.Map;
  */
 
 public class FindChannelList_Servlet extends AsyncTask<String, Integer, FindChannelList> {
-
     private static final String TAG = "FindChannelList_Servlet";
-    Home_Activity activity;
 
     public static int num = 1;
     String res;
 
-    TimeCount timeCount;
-
-    public FindChannelList_Servlet(Home_Activity activity) {
-        this.activity = activity;
-
-        timeCount = new TimeCount(3000, 1000);
-    }
+    TimeCount timeCount= new TimeCount(3000, 1000);
 
     @Override
     protected FindChannelList doInBackground(String... strings) {
         Map map = new HashMap();
         FindChannelList channelList;
-
         if (TextUtils.isEmpty(SaveUtils.getString(Save_Key.ID))) {
             channelList = new FindChannelList();
             channelList.setErrorcode(-3);
             channelList.setErrormsg("数据缺失");
             return channelList;
         }
-        map.put("devType", Const.devType);
+
         map.put("devId", SaveUtils.getString(Save_Key.ID));
         res = HttpUtil.doPost(Const.URL + "cms/channelController/findChannelList.do", map);
 
@@ -79,12 +71,12 @@ public class FindChannelList_Servlet extends AsyncTask<String, Integer, FindChan
         super.onPostExecute(channelList);
         Loading.dismiss();
 
-        LogUtil.e(TAG, channelList.getErrormsg());
-
         switch (channelList.getErrorcode()) {
             case 1000:
                 SaveUtils.setString(Save_Key.Channe, res);
-                activity.updateshow(channelList);
+
+                EventBus.getDefault().post(channelList);
+
                 break;
 
             case -3:
@@ -94,7 +86,7 @@ public class FindChannelList_Servlet extends AsyncTask<String, Integer, FindChan
                 }
                 break;
             case -1:
-                activity.updateshow(new Gson().fromJson(SaveUtils.getString(Save_Key.Channe), FindChannelList.class));
+                EventBus.getDefault().post(new Gson().fromJson(SaveUtils.getString(Save_Key.Channe), FindChannelList.class));
                 break;
         }
 
@@ -112,7 +104,7 @@ public class FindChannelList_Servlet extends AsyncTask<String, Integer, FindChan
         @Override
         public void onFinish() {
             //再次启动
-            new FindChannelList_Servlet(activity).execute();
+            new FindChannelList_Servlet().execute();
         }
 
         @Override

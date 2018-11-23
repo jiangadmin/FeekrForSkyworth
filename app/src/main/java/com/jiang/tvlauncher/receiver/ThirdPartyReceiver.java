@@ -132,7 +132,6 @@ public class ThirdPartyReceiver extends BroadcastReceiver implements IThirdParty
             e.printStackTrace();
             LogUtil.e(TAG, e.getMessage());
         }
-
     }
 
     @Override
