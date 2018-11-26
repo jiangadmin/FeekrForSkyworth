@@ -6,15 +6,11 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.KeyEvent;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.jiang.tvlauncher.R;
 import com.jiang.tvlauncher.activity.Home_Activity;
-import com.jiang.tvlauncher.activity.Launcher_Activity;
-import com.jiang.tvlauncher.entity.Const;
 import com.jiang.tvlauncher.entity.Save_Key;
 import com.jiang.tvlauncher.utils.SaveUtils;
-import com.jiang.tvlauncher.utils.Tools;
 
 /**
  * @author: jiangadmin
@@ -108,12 +104,12 @@ public class PwdDialog extends Dialog {
 //                    Toast.makeText(activity,"清楚成功",Toast.LENGTH_SHORT).show();
 //                }
 
-                if (password.equals(SaveUtils.getString(Save_Key.Password))){
-                    if (activity instanceof Home_Activity){
+                if (password.equals(SaveUtils.getString(Save_Key.Password))) {
+//                    if (activity instanceof Home_Activity){
+//                        ((Home_Activity) activity).PwdRe();
+//                    }
+                    if (activity instanceof Home_Activity) {
                         ((Home_Activity) activity).PwdRe();
-                    }
-                    if (activity instanceof Launcher_Activity){
-                        ((Launcher_Activity)activity).PwdRe();
                     }
                 }
 

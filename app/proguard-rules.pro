@@ -25,8 +25,8 @@
 #-renamesourcefileattribute SourceFile
 
 -dontwarn com.tencent.bugly.**
--keep public class com.tencent.bugly.**{*;}
+-keep public class com.tencent.bugly.** {*;}
 
 -dontwarn com.jiang.tvlauncher.**
--keep public class com.jiang.tvluncher.**{*;}
--keep public class *extends java.lang.annotation.Annotation{*;}
+-keep public class com.jiang.tvluncher.** {*;}
+

@@ -1,19 +1,26 @@
 package com.jiang.tvlauncher.activity;
 
+import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.os.Environment;
+import android.os.IBinder;
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.util.DisplayMetrics;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -23,6 +30,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.Gson;
 import com.jiang.tvlauncher.MyApp;
 import com.jiang.tvlauncher.R;
@@ -33,9 +43,12 @@ import com.jiang.tvlauncher.dialog.WIFIAPDialog;
 import com.jiang.tvlauncher.entity.Const;
 import com.jiang.tvlauncher.entity.FindChannelList;
 import com.jiang.tvlauncher.entity.Save_Key;
+import com.jiang.tvlauncher.entity.Theme_Entity;
+import com.jiang.tvlauncher.receiver.NetReceiver;
 import com.jiang.tvlauncher.servlet.DownUtil;
 import com.jiang.tvlauncher.servlet.FindChannelList_Servlet;
 import com.jiang.tvlauncher.servlet.GetVIP_Servlet;
+import com.jiang.tvlauncher.servlet.Get_Theme_Servlet;
 import com.jiang.tvlauncher.servlet.Update_Servlet;
 import com.jiang.tvlauncher.utils.AnimUtils;
 import com.jiang.tvlauncher.utils.FileUtils;
@@ -45,50 +58,47 @@ import com.jiang.tvlauncher.utils.SaveUtils;
 import com.jiang.tvlauncher.utils.ShellUtils;
 import com.jiang.tvlauncher.utils.Tools;
 import com.jiang.tvlauncher.view.TitleView;
-import com.squareup.picasso.Picasso;
+import com.snm.upgrade.aidl.ApproveDeviceManager;
+import com.snm.upgrade.aidl.ITaskCallback;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
-import java.io.DataOutputStream;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @author: jiangadmin
- * @date: 2017/7/3.
+ * @date: 2018/10/12.
  * @Email: www.fangmu@qq.com
  * @Phone: 186 6120 1018
- * TODO: 主页
+ * TODO: 新主页
  */
 
 public class Home_Activity extends Base_Activity implements View.OnClickListener, View.OnFocusChangeListener {
-    private static final String TAG = "Home_Activity";
+    private static final String TAG = "Launcher_Activity";
     RelativeLayout toolbar_view;
     LinearLayout back;
-    ImageView back_img;
-    TextView back_txt;
+    ImageView main_bg, main_bg_0, back_img;
+    TextView back_txt, title_0, title, title_2;
 
     LinearLayout setting;
-    ImageView setting_img;
+    ImageView bg, setting_img, title_icon;
     TextView setting_txt;
 
-    LinearLayout wifiap;
+    LinearLayout wifiap, title_view;
     TextView wifiap_txt;
 
     TitleView titleview;
 
-    RelativeLayout home1, home2, home3, home4;
-    ImageView home1bg, home2bg, home3bg, home4bg;
+    ImageView home1, home2, home3, home4;
     TextView name1, name2, name3, name4;
 
     TextView ver;
 
+    List<ImageView> homelist = new ArrayList<>();
     List<TextView> namelist = new ArrayList<>();
-    List<ImageView> homebglist = new ArrayList<>();
-    List<RelativeLayout> homelist = new ArrayList<>();
     List<Integer> hometype = new ArrayList<>();
 
     boolean toolbar_show = false;
@@ -97,45 +107,87 @@ public class Home_Activity extends Base_Activity implements View.OnClickListener
     static FindChannelList channelList;
 
     TimeCount timeCount;
+    TitleTime titleTime;
 
     ImageView imageView;
     VideoView videoView;
 
     WarningDialog warningDialog = null;
 
+    int i = 1;
+    String[] title_list;
+
+
+    private static ApproveDeviceManager approveDeviceManager;
+
+    NetReceiver netReceiver;
+    private boolean NanChuan_Ok = true;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        EventBus.getDefault().register(this);
-        setContentView(R.layout.activty_home);
-
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+            LogUtil.e(TAG,"初始化EventBus");
+        }
+        setContentView(R.layout.activty_main);
         MyApp.activity = this;
+
+        netReceiver = new NetReceiver();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
+        intentFilter.addAction("android.net.wifi.WIFI_STATE_CHANGED");
+        intentFilter.addAction("android.net.wifi.STATE_CHANGE");
+        registerReceiver(netReceiver, intentFilter);
 
         initview();
         initeven();
 
         //判断网络
-        if (!Tools.isNetworkConnected())
+        if (!Tools.isNetworkConnected()) {
             NetDialog.showL();
-
+        }
         onMessage("update");
+        LogUtil.e(TAG,"update");
 
         //首先显示本地资源
         if (!TextUtils.isEmpty(SaveUtils.getString(Save_Key.Channe))) {
-            updateshow(new Gson().fromJson(SaveUtils.getString(Save_Key.Channe), FindChannelList.class));
+            onMessage(new Gson().fromJson(SaveUtils.getString(Save_Key.Channe), FindChannelList.class));
         }
-
-
+        //首先显示本地资源
+        if (!TextUtils.isEmpty(SaveUtils.getString(Save_Key.Theme))) {
+            onMessage(new Gson().fromJson(SaveUtils.getString(Save_Key.Theme), Theme_Entity.class));
+        }
     }
 
     @Override
     protected void onDestroy() {
-        EventBus.getDefault().unregister(this);
+        if (EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().unregister(this);
+        }
         super.onDestroy();
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
+    /**
+     * 设置颜色
+     *
+     * @param color
+     */
+    private void title_color(String color) {
+
+        title_0.setBackground(new BitmapDrawable(getResources(), ImageUtils.tintBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.kuang_0), Color.parseColor(color))));
+        title.setBackground(new BitmapDrawable(getResources(), ImageUtils.tintBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.kuang_1), Color.parseColor(color))));
+        title_2.setBackground(new BitmapDrawable(getResources(), ImageUtils.tintBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.kuang_2), Color.parseColor(color))));
+        title_icon.setBackground(new BitmapDrawable(getResources(), ImageUtils.tintBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.round), Color.parseColor(color))));
+
+        name1.setTextColor(Color.parseColor(color));
+        name2.setTextColor(Color.parseColor(color));
+        name3.setTextColor(Color.parseColor(color));
+        name4.setTextColor(Color.parseColor(color));
+
+    }
+
+    @Subscribe
     public void onMessage(String showwarn) {
         switch (showwarn) {
             case "0":
@@ -149,30 +201,39 @@ public class Home_Activity extends Base_Activity implements View.OnClickListener
                     warningDialog.dismiss();
                 }
                 break;
-            case "update":
 
+            case "update":
                 //检查更新
                 new Update_Servlet(this).execute();
-                new FindChannelList_Servlet().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
+                new FindChannelList_Servlet().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                //获取主题
+                new Get_Theme_Servlet().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                break;
+
+            case "nanchuan":
+                LogUtil.e(TAG, "准备认证");
+                nanchuan();
                 break;
             default:
                 break;
         }
     }
 
-
     private void initview() {
+
+        main_bg = findViewById(R.id.main_bg);
+        main_bg_0 = findViewById(R.id.main_bg_0);
+        title_view = findViewById(R.id.title_view);
+        title_icon = findViewById(R.id.title_icon);
+        title_0 = findViewById(R.id.title_0);
+        title = findViewById(R.id.title);
+        title_2 = findViewById(R.id.title_2);
 
         home1 = findViewById(R.id.home_1);
         home2 = findViewById(R.id.home_2);
         home3 = findViewById(R.id.home_3);
         home4 = findViewById(R.id.home_4);
-
-        home1bg = findViewById(R.id.home_1_bg);
-        home2bg = findViewById(R.id.home_2_bg);
-        home3bg = findViewById(R.id.home_3_bg);
-        home4bg = findViewById(R.id.home_4_bg);
 
         name1 = findViewById(R.id.home_1_name);
         name2 = findViewById(R.id.home_2_name);
@@ -195,30 +256,10 @@ public class Home_Activity extends Base_Activity implements View.OnClickListener
         ver = findViewById(R.id.ver);
         ver.setText("V " + Tools.getVersionName(MyApp.context));
 
-        //获取屏幕宽度
-        DisplayMetrics metric = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(metric);
-
-        LinearLayout.LayoutParams ll_home = (LinearLayout.LayoutParams) home1.getLayoutParams();
-
-        ll_home.height = metric.heightPixels / 2;
-
-        ll_home.width = metric.widthPixels / 5;
-
-        home1.setLayoutParams(ll_home);
-        home2.setLayoutParams(ll_home);
-        home3.setLayoutParams(ll_home);
-        home4.setLayoutParams(ll_home);
-
         homelist.add(home1);
         homelist.add(home2);
         homelist.add(home3);
         homelist.add(home4);
-
-        homebglist.add(home1bg);
-        homebglist.add(home2bg);
-        homebglist.add(home3bg);
-        homebglist.add(home4bg);
 
         namelist.add(name1);
         namelist.add(name2);
@@ -232,7 +273,7 @@ public class Home_Activity extends Base_Activity implements View.OnClickListener
         if (SaveUtils.getBoolean(Save_Key.NewImage)) {
             LogUtil.e(TAG, "有图片");
             imageView.setVisibility(View.VISIBLE);
-            Picasso.with(this).load(SaveUtils.getString(Save_Key.NewImageUrl)).into(imageView);
+            Glide.with(this).load(SaveUtils.getString(Save_Key.NewImageUrl)).into(imageView);
             timeCount = new TimeCount(5000, 1000);
             timeCount.start();
         }
@@ -261,7 +302,6 @@ public class Home_Activity extends Base_Activity implements View.OnClickListener
     }
 
     private void initeven() {
-
         home1.setOnClickListener(this);
         home2.setOnClickListener(this);
         home3.setOnClickListener(this);
@@ -289,22 +329,84 @@ public class Home_Activity extends Base_Activity implements View.OnClickListener
     }
 
     @Override
+    public void onBackPressed() {
+        return;
+    }
+
+    /**
+     * 南方传媒认证
+     */
+    public void nanchuan() {
+        Intent intent = new Intent("com.snm.upgrade.approve.ApproveManagerServer");
+        intent.setPackage("com.snm.upgrade");
+        bindService(intent, new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+                approveDeviceManager = ApproveDeviceManager.Stub.asInterface(iBinder);
+                try {
+                    //registerCallback（）这个注册接口是返回结果回调，先注册
+                    approveDeviceManager.registerCallback(new ITaskCallback.Stub() {
+                        @Override
+                        public void returnResult(String Result) {
+                            if (Result.equals("998")) {
+                                NanChuan_Ok = false;
+                                Toast.makeText(getApplicationContext(), "南方传媒认证失败", Toast.LENGTH_SHORT).show();
+                            } else {
+                                NanChuan_Ok = true;
+                                Toast.makeText(getApplicationContext(), "南方传媒认证成功", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                    //requestApprove()这个是调起我们的认证接口
+                    int flag = approveDeviceManager.requestApprove();
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName componentName) {
+                approveDeviceManager = null;
+            }
+        }, BIND_AUTO_CREATE);
+    }
+
+    boolean showToast = true;
+    long[] mHits = new long[7];
+
+    @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
 
-        LogUtil.e(TAG, keyCode);
-
         switch (keyCode) {
+            case KeyEvent.KEYCODE_MENU:
+                System.arraycopy(mHits, 1, mHits, 0, mHits.length - 1);// 数组向左移位操作
+                mHits[mHits.length - 1] = SystemClock.uptimeMillis();
+                if (mHits[0] >= (SystemClock.uptimeMillis() - 5000)) {
+                    LogUtil.e(TAG, "Password:" + SaveUtils.getString(Save_Key.Password));
+                    if (TextUtils.isEmpty(SaveUtils.getString(Save_Key.Password))) {
+                        Setting_Activity.start(this);
+                    } else {
+                        new PwdDialog(this, R.style.MyDialog).show();
+                    }
+                } else {
+                    showToast = true;
+                }
+                return true;
             case KeyEvent.KEYCODE_BACK:
                 return true;
             case KeyEvent.KEYCODE_DPAD_UP:
             case KeyEvent.KEYCODE_DPAD_DOWN:
             case KeyEvent.KEYCODE_DPAD_LEFT:
             case KeyEvent.KEYCODE_DPAD_RIGHT:
+            case KeyEvent.KEYCODE_ENTER:
+                if (!NanChuan_Ok) {
+                    Toast.makeText(this, "南方传媒认证失败", Toast.LENGTH_SHORT).show();
+                    return true;
+                }
                 return false;
-
-            default:
-                return true;
         }
+        return true;
     }
 
     @Override
@@ -321,22 +423,86 @@ public class Home_Activity extends Base_Activity implements View.OnClickListener
     }
 
     /**
-     * 更新页面
+     * 主题返回 网络正常情况下
+     *
+     * @param entity
      */
+    @SuppressLint("CheckResult")
     @Subscribe
-    public void updateshow(FindChannelList channelList) {
+    public void onMessage(Theme_Entity entity) {
+
+        Theme_Entity.ResultBean bean = entity.getResult();
+        if (bean != null) {
+            //赋值背景 前景显示
+            Glide.with(this).load(bean.getBgImg()).into(main_bg);
+
+            //图片名
+            String imgname = Tools.getFileNameWithSuffix(bean.getBgImg());
+            //判断图片文件是否存在
+            if (!FileUtils.checkFileExists(imgname)) {
+                //下载图片
+                new DownUtil(this).downLoad(bean.getBgImg(), imgname, false);
+            }
+
+            //设置图标背景色 对话框颜色
+            title_color(bean.getMicLogoColor());
+
+            //设置对话框内容颜色
+            title.setTextColor(Color.parseColor(bean.getTipFontColor()));
+
+            //标题集合
+            title_list = null;
+            title_list = bean.getTipContents().split("#");
+
+            //是否显示标题
+            title_view.setVisibility(bean.getTipShowFlag() == 1 ? View.VISIBLE : View.GONE);
+
+            //是否显示控制台
+            setting.setVisibility(bean.getConsoleShowFlag() == 1 ? View.VISIBLE : View.GONE);
+
+            //是否显示栏目名
+            name1.setVisibility(bean.getCnameShowFlag() == 1 ? View.VISIBLE : View.GONE);
+            name2.setVisibility(bean.getCnameShowFlag() == 1 ? View.VISIBLE : View.GONE);
+            name3.setVisibility(bean.getCnameShowFlag() == 1 ? View.VISIBLE : View.GONE);
+            name4.setVisibility(bean.getCnameShowFlag() == 1 ? View.VISIBLE : View.GONE);
+
+            //标题轮询时间
+            int title_time = bean.getTipSwitchRate();
+
+            if (title_list != null && title_list.length > 0) {
+                title.setText(title_list[0]);
+            }
+
+            //倒计时
+            if (title_list != null && title_list.length > 1) {
+                if (titleTime != null)
+                    titleTime.cancel();
+                titleTime = null;
+
+                titleTime = new TitleTime(title_time, title_time);
+                titleTime.start();
+            }
+        }
+    }
+
+    /**
+     * 更新页面
+     *
+     * @param channelList
+     */
+    @SuppressLint("CheckResult")
+    @Subscribe
+    public void onMessage(FindChannelList channelList) {
         this.channelList = channelList;
-        String file = Environment.getExternalStorageDirectory().getPath() + "/feekr/Download/";
-//        String file = "/storage/emulated/legacy/feekr/Download/";
 
         //更改开机动画
-        LogUtil.e(TAG, "更改开机动画");
         if (!TextUtils.isEmpty(SaveUtils.getString(Save_Key.BootAn))) {
 
             //判断文件是否存在
 //            if (!FileUtils.checkFileExists(Tools.getFileNameWithSuffix(SaveUtils.getString(Save_Key.BootAn)))) {
             LogUtil.e(TAG, "开始下载");
-            new DownUtil(this).downLoad(SaveUtils.getString(Save_Key.BootAn), "bootanimation.zip", false);
+            new DownUtil(this).downLoad(SaveUtils.getString(Save_Key.BootAn),
+                    "bootanimation.zip", false);
 //            }
         }
 
@@ -353,8 +519,16 @@ public class Home_Activity extends Base_Activity implements View.OnClickListener
                 //设置栏目名称
                 namelist.get(i).setText(channelList.getResult().get(i).getChannelName());
                 //加载图片 优先本地
-//                            if (!FileUtils.checkFileExists(Tools.getFileNameWithSuffix(SaveUtils.getString(Save_Key.BootAn)))) {
-                Picasso.with(this).load(url).placeholder(new BitmapDrawable(ImageUtils.getBitmap(new File(file + SaveUtils.getString(Save_Key.ItemImage + i))))).into(homebglist.get(i));
+                RequestOptions options = new RequestOptions();
+                String s = Const.FilePath + SaveUtils.getString(Save_Key.ItemImage + i);
+                //判断文件是否存在
+                if (FileUtils.checkFileExists(Tools.getFileNameWithSuffix(s))) {
+                    options.placeholder(new BitmapDrawable(getResources(), ImageUtils.getBitmap(new File(s))));
+                    options.error(new BitmapDrawable(getResources(), ImageUtils.getBitmap(new File(s))));
+                }
+                options.skipMemoryCache(false);
+                options.diskCacheStrategy(DiskCacheStrategy.ALL);
+                Glide.with(this).load(url).apply(options).into(homelist.get(i));
 
                 hometype.add(channelList.getResult().get(i).getContentType());
 
@@ -380,6 +554,12 @@ public class Home_Activity extends Base_Activity implements View.OnClickListener
             warningDialog.show();
             return;
         }
+
+        if (!NanChuan_Ok) {
+            Toast.makeText(this, "南方传媒认证失败", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         switch (view.getId()) {
             case R.id.wifiap:
                 new WIFIAPDialog(this).show();
@@ -388,12 +568,12 @@ public class Home_Activity extends Base_Activity implements View.OnClickListener
                 new PwdDialog(this, R.style.MyDialog).show();
                 break;
             case R.id.setting:
-//                startActivity(new Intent(getPackageManager().getLaunchIntentForPackage("com.android.settings")));
-//                LogUtil.e(TAG, "Password:" + SaveUtils.getString(Save_Key.Password));
-//                if (TextUtils.isEmpty(SaveUtils.getString(Save_Key.Password))) {
-//                } else {
-                new PwdDialog(this, R.style.MyDialog).show();
-//                }
+                LogUtil.e(TAG, "Password:" + SaveUtils.getString(Save_Key.Password));
+                if (TextUtils.isEmpty(SaveUtils.getString(Save_Key.Password))) {
+                    Setting_Activity.start(this);
+                } else {
+                    new PwdDialog(this, R.style.MyDialog).show();
+                }
                 break;
             case R.id.home_1:
                 open(0);
@@ -410,8 +590,12 @@ public class Home_Activity extends Base_Activity implements View.OnClickListener
         }
     }
 
+    /**
+     * 启动栏目
+     *
+     * @param i
+     */
     public void open(int i) {
-
         //数据缺失的情况
         if (hometype.size() <= i) {
             Toast.makeText(this, "栏目未开通！", Toast.LENGTH_SHORT).show();
@@ -436,7 +620,7 @@ public class Home_Activity extends Base_Activity implements View.OnClickListener
                     }
 
                     //验证是否有此应用
-                    if (Tools.isAppInstalled(this, packname)) {
+                    if (Tools.isAppInstalled(packname)) {
                         //如果要启动定制版腾讯视频
                         if (packname.equals(Const.TvViedo)) {
 
@@ -481,24 +665,30 @@ public class Home_Activity extends Base_Activity implements View.OnClickListener
         Setting_Activity.start(this);
     }
 
+    /**
+     * 焦点变化
+     *
+     * @param view
+     * @param b
+     */
     @Override
     public void onFocusChange(View view, boolean b) {
-
         switch (view.getId()) {
             case R.id.setting:
-                setting_txt.setTextColor(getResources().getColor(b == true ? R.color.white : R.color.gray));
+                setting_txt.setTextColor(getResources().getColor(b ? R.color.white : R.color.gray));
                 break;
             case R.id.back:
-                back_txt.setTextColor(getResources().getColor(b == true ? R.color.white : R.color.gray));
+                back_txt.setTextColor(getResources().getColor(b ? R.color.white : R.color.gray));
                 break;
             case R.id.wifiap:
-                wifiap_txt.setTextColor(getResources().getColor(b == true ? R.color.white : R.color.gray));
+                wifiap_txt.setTextColor(getResources().getColor(b ? R.color.white : R.color.gray));
                 break;
             default:
-                if (b)
+                if (b) {
                     enlargeAnim(view);
-                else
+                } else {
                     reduceAnim(view);
+                }
                 break;
         }
     }
@@ -525,6 +715,37 @@ public class Home_Activity extends Base_Activity implements View.OnClickListener
         }
     }
 
+    /**
+     * 标题定时轮询
+     */
+    class TitleTime extends CountDownTimer {
+
+        public TitleTime(long millisInFuture, long countDownInterval) {
+            super(millisInFuture * 1000, countDownInterval * 1000);
+        }
+
+        @Override
+        public void onTick(long l) {
+
+        }
+
+        @Override
+        public void onFinish() {
+            try {
+                title.setText(title_list[i]);
+
+                if (i == title_list.length - 1) {
+                    i = 0;
+                } else {
+                    i++;
+                }
+            } catch (Exception e) {
+                LogUtil.e(TAG, e.getMessage());
+            }
+
+            start();
+        }
+    }
 
     /**
      * 警告框
@@ -540,7 +761,6 @@ public class Home_Activity extends Base_Activity implements View.OnClickListener
             setContentView(R.layout.dialog_warning);
             setCanceledOnTouchOutside(false);
             setCancelable(false);
-
         }
     }
 }

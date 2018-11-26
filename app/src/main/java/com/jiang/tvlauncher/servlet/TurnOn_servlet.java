@@ -8,7 +8,6 @@ import android.text.TextUtils;
 
 import com.google.gson.Gson;
 import com.jiang.tvlauncher.MyApp;
-import com.jiang.tvlauncher.activity.Home_Activity;
 import com.jiang.tvlauncher.dialog.Loading;
 import com.jiang.tvlauncher.entity.Const;
 import com.jiang.tvlauncher.entity.Save_Key;
@@ -172,14 +171,11 @@ public class TurnOn_servlet extends AsyncTask<String, Integer, TurnOnEntity> {
         Const.Nets = false;
         Loading.dismiss();
 
-
         switch (entity.getErrorcode()) {
             case 1000:
-
                 EventBus.getDefault().post("update");
                 break;
         }
-
     }
 
     public static int num = 0;

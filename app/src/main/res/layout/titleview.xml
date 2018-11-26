@@ -8,9 +8,10 @@
         android:layout_width="match_parent"
         android:layout_height="42dp"
         android:alpha="70"
-        android:background="@color/title_bg">
+      >
 
         <ImageView
+            android:visibility="gone"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
@@ -50,6 +51,7 @@
 
         <!--控制台-->
         <LinearLayout
+            android:visibility="gone"
             android:id="@+id/setting"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
