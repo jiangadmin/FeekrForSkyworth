@@ -46,6 +46,7 @@ public class FindChannelList_Servlet extends AsyncTask<String, Integer, FindChan
         }
 
         map.put("devId", SaveUtils.getString(Save_Key.ID));
+        map.put("devType", Const.devType);
         res = HttpUtil.doPost(Const.URL + "cms/channelController/findChannelList.do", map);
 
         if (TextUtils.isEmpty(res)) {
