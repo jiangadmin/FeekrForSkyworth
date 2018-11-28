@@ -35,7 +35,7 @@ public class Get_Theme_Servlet extends AsyncTask<String, Integer, Theme_Entity> 
         Map map = new HashMap();
 
         map.put("serialNum", MyApp.getSerialNum());
-        map.put("devType", "1");
+        map.put("devType", Const.devType);
 
         res = HttpUtil.doPost(Const.URL + "cms/themeController/findLauncherTheme.do", map);
 
