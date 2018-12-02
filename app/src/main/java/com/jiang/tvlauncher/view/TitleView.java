@@ -2,6 +2,7 @@ package com.jiang.tvlauncher.view;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
@@ -96,6 +97,12 @@ public class TitleView extends RelativeLayout {
             }
         } else {
             imgNetWorkState.setImageResource(R.mipmap.networkstate_off);
+        }
+    }
+
+    public void setTimeColor(String color){
+        if (tvTime!=null){
+            tvTime.setTextColor(Color.parseColor(color));
         }
     }
 

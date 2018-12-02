@@ -9,9 +9,10 @@ package com.jiang.tvlauncher.entity;
  */
 public class Theme_Entity extends BaseEntity {
 
+
     /**
      * errorcode : 1000
-     * result : {"bgImg":"http://pa5am0bdt.bkt.clouddn.com/4CE070D95CE7FA92EC150A3976DAF59D.jpg","cnameShowFlag":0,"consoleShowFlag":0,"createAuthor":"系统管理员","createTime":"2018-10-13 19:34:07","id":1,"isDefault":1,"isDelete":0,"lgeekActName":"","lgeekPagName":"","micLogoColor":"#13278a","remark":"","startLgeekFlag":0,"status":1,"themeName":"默认","tipContents":"测试#测试2#测试3","tipFontColor":"#12e619","tipShowFlag":0,"tipSwitchRate":7,"updateAuthor":"系统管理员","updateTime":"2018-11-03 22:45:38"}
+     * result : {"bgImg":"http://testresource.feekrs.com/o_1ct7hrbv5nff15lu14ck1lfc19787.jpg","cnameShowFlag":0,"consoleShowFlag":0,"createAuthor":"系统管理员","createTime":"2018-11-26 16:08:04","devType":2,"id":14,"isDefault":1,"isDelete":0,"lgeekActName":"com.lgeek.module_lvteng_tv.MainActivity","lgeekPagName":"com.lgeek.module_lvteng_tv","micLogoColor":"#0525f5","remark":"","startLgeekFlag":1,"status":1,"themeName":"盒子测试","timesCtrlColor":"#2030d9","tipContents":"1","tipFontColor":"#0d30e0","tipShowFlag":0,"tipSwitchRate":7,"updateAuthor":"系统管理员","updateTime":"2018-12-01 19:38:05"}
      */
 
     private ResultBean result;
@@ -26,27 +27,29 @@ public class Theme_Entity extends BaseEntity {
 
     public static class ResultBean {
         /**
-         * bgImg : http://pa5am0bdt.bkt.clouddn.com/4CE070D95CE7FA92EC150A3976DAF59D.jpg
+         * bgImg : http://testresource.feekrs.com/o_1ct7hrbv5nff15lu14ck1lfc19787.jpg
          * cnameShowFlag : 0
          * consoleShowFlag : 0
          * createAuthor : 系统管理员
-         * createTime : 2018-10-13 19:34:07
-         * id : 1
+         * createTime : 2018-11-26 16:08:04
+         * devType : 2
+         * id : 14
          * isDefault : 1
          * isDelete : 0
-         * lgeekActName :
-         * lgeekPagName :
-         * micLogoColor : #13278a
+         * lgeekActName : com.lgeek.module_lvteng_tv.MainActivity
+         * lgeekPagName : com.lgeek.module_lvteng_tv
+         * micLogoColor : #0525f5
          * remark :
-         * startLgeekFlag : 0
+         * startLgeekFlag : 1
          * status : 1
-         * themeName : 默认
-         * tipContents : 测试#测试2#测试3
-         * tipFontColor : #12e619
+         * themeName : 盒子测试
+         * timesCtrlColor : #2030d9
+         * tipContents : 1
+         * tipFontColor : #0d30e0
          * tipShowFlag : 0
          * tipSwitchRate : 7
          * updateAuthor : 系统管理员
-         * updateTime : 2018-11-03 22:45:38
+         * updateTime : 2018-12-01 19:38:05
          */
 
         private String bgImg;
@@ -54,6 +57,7 @@ public class Theme_Entity extends BaseEntity {
         private int consoleShowFlag;
         private String createAuthor;
         private String createTime;
+        private int devType;
         private int id;
         private int isDefault;
         private int isDelete;
@@ -64,6 +68,7 @@ public class Theme_Entity extends BaseEntity {
         private int startLgeekFlag;
         private int status;
         private String themeName;
+        private String timesCtrlColor;
         private String tipContents;
         private String tipFontColor;
         private int tipShowFlag;
@@ -109,6 +114,14 @@ public class Theme_Entity extends BaseEntity {
 
         public void setCreateTime(String createTime) {
             this.createTime = createTime;
+        }
+
+        public int getDevType() {
+            return devType;
+        }
+
+        public void setDevType(int devType) {
+            this.devType = devType;
         }
 
         public int getId() {
@@ -189,6 +202,14 @@ public class Theme_Entity extends BaseEntity {
 
         public void setThemeName(String themeName) {
             this.themeName = themeName;
+        }
+
+        public String getTimesCtrlColor() {
+            return timesCtrlColor;
+        }
+
+        public void setTimesCtrlColor(String timesCtrlColor) {
+            this.timesCtrlColor = timesCtrlColor;
         }
 
         public String getTipContents() {

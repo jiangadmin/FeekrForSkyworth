@@ -427,10 +427,8 @@ public class Home_Activity extends Base_Activity implements View.OnClickListener
      *
      * @param entity
      */
-    @SuppressLint("CheckResult")
     @Subscribe
     public void onMessage(Theme_Entity entity) {
-
         Theme_Entity.ResultBean bean = entity.getResult();
         if (bean != null) {
             //赋值背景 前景显示
@@ -448,7 +446,12 @@ public class Home_Activity extends Base_Activity implements View.OnClickListener
             title_color(bean.getMicLogoColor());
 
             //设置对话框内容颜色
-            title.setTextColor(Color.parseColor(bean.getTipFontColor()));
+            title.setTextColor(Color.parseColor(bean.getTimesCtrlColor()));
+
+            //设置时间颜色
+            if (!TextUtils.isEmpty(bean.getTimesCtrlColor())) {
+                titleview.setTimeColor(bean.getTimesCtrlColor());
+            }
 
             //标题集合
             title_list = null;
