@@ -446,7 +446,7 @@ public class Home_Activity extends Base_Activity implements View.OnClickListener
             title_color(bean.getMicLogoColor());
 
             //设置对话框内容颜色
-            title.setTextColor(Color.parseColor(bean.getTimesCtrlColor()));
+            title.setTextColor(Color.parseColor(bean.getTipFontColor()));
 
             //设置时间颜色
             if (!TextUtils.isEmpty(bean.getTimesCtrlColor())) {
