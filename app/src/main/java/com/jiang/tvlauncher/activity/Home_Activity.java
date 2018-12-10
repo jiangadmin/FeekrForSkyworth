@@ -1,7 +1,6 @@
 package com.jiang.tvlauncher.activity;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Context;
@@ -128,18 +127,19 @@ public class Home_Activity extends Base_Activity implements View.OnClickListener
         super.onCreate(savedInstanceState);
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
-            LogUtil.e(TAG,"初始化EventBus");
+            LogUtil.e(TAG, "初始化EventBus");
         }
         setContentView(R.layout.activty_main);
         MyApp.activity = this;
 
-        netReceiver = new NetReceiver();
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
-        intentFilter.addAction("android.net.wifi.WIFI_STATE_CHANGED");
-        intentFilter.addAction("android.net.wifi.STATE_CHANGE");
-        registerReceiver(netReceiver, intentFilter);
-
+        if (netReceiver == null) {
+            netReceiver = new NetReceiver();
+            IntentFilter intentFilter = new IntentFilter();
+            intentFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
+            intentFilter.addAction("android.net.wifi.WIFI_STATE_CHANGED");
+            intentFilter.addAction("android.net.wifi.STATE_CHANGE");
+            registerReceiver(netReceiver, intentFilter);
+        }
         initview();
         initeven();
 
@@ -148,7 +148,7 @@ public class Home_Activity extends Base_Activity implements View.OnClickListener
             NetDialog.showL();
         }
         onMessage("update");
-        LogUtil.e(TAG,"update");
+        LogUtil.e(TAG, "update");
 
         //首先显示本地资源
         if (!TextUtils.isEmpty(SaveUtils.getString(Save_Key.Channe))) {
