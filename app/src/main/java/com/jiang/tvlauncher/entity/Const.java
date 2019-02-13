@@ -2,6 +2,8 @@ package com.jiang.tvlauncher.entity;
 
 import android.os.Environment;
 
+import com.jiang.tvlauncher.BuildConfig;
+
 /**
  * Created by  jiang
  * on 2017/6/19.
@@ -12,9 +14,9 @@ import android.os.Environment;
  */
 public class Const {
 
-    public static final String FilePath =  Environment.getExternalStorageDirectory().getPath() + "/feekr/Download/";
-    //        public static String URL = "http://api.feekrs.com/";
-    public static String URL = " http://testapi.feekrs.com/";
+    public static final String FilePath = Environment.getExternalStorageDirectory().getPath() + "/feekr/Download/";
+    public static String URL = BuildConfig.NetUrl;
+//    public static String URL = " http://testapi.feekrs.com/";
 
     public static int Timing = 30;
     public static int ID;

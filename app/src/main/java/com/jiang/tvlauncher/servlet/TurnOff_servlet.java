@@ -31,12 +31,11 @@ public class TurnOff_servlet extends AsyncTask<String, Integer, BaseEntity> {
             entity = new BaseEntity();
             entity.setErrorcode(-3);
             entity.setErrormsg("数据缺失");
-        }
-        else
+        } else {
             map.put("devType", Const.devType);
-        map.put("devId", SaveUtils.getString(Save_Key.ID));
-        map.put("turnType", "3");
-
+            map.put("devId", SaveUtils.getString(Save_Key.ID));
+            map.put("turnType", "3");
+        }
         String res = HttpUtil.doPost(Const.URL + "dev/devTurnOffController/turnOff.do", map);
         if (res != null) {
             try {
