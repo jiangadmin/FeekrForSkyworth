@@ -15,6 +15,7 @@ import com.jiang.tvlauncher.servlet.VIPCallBack_Servlet;
 import com.jiang.tvlauncher.utils.LogUtil;
 import com.jiang.tvlauncher.utils.SaveUtils;
 import com.ktcp.video.thirdagent.JsonUtils;
+import com.ktcp.video.thirdagent.KtcpPaySdkProxy;
 import com.ktcp.video.thirdagent.ThirdPartyAgent;
 import com.ktcp.video.thirdagent.inter.IThirdPartyAgentListener;
 import com.ktcp.video.thirdparty.IThirdPartyAuthCallback;
@@ -26,7 +27,7 @@ import java.util.HashMap;
 /**
  * Created by v_shlicheng on 2018/4/26.
  */
-
+@Deprecated
 public class ThirdPartyReceiver extends BroadcastReceiver implements IThirdPartyAgentListener {
     private static final String TAG = "ThirdpartyReceiver";
     private Context context;
@@ -38,6 +39,11 @@ public class ThirdPartyReceiver extends BroadcastReceiver implements IThirdParty
     @Override
     public void onReceive(Context context, Intent intent) {
         this.context = context;
+        //新增代码用来处理三方付费的回调只在一处调用
+        if (KtcpPaySdkProxy.getInstance().getAgentVersion().compareTo("2.0.0") >= 0) {
+            Log.i(TAG, "deal KtcpPaySDK use KtcpPaySDKCallback");
+            return;
+        }
 
         LogUtil.e(TAG, "处理登录");
 

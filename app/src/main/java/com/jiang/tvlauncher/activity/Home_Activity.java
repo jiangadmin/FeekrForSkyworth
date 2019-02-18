@@ -49,6 +49,7 @@ import com.jiang.tvlauncher.servlet.GetVIP_Servlet;
 import com.jiang.tvlauncher.servlet.Get_Theme_Servlet;
 import com.jiang.tvlauncher.servlet.Update_Servlet;
 import com.jiang.tvlauncher.utils.AnimUtils;
+import com.jiang.tvlauncher.utils.DownloadUtils;
 import com.jiang.tvlauncher.utils.FileUtils;
 import com.jiang.tvlauncher.utils.ImageUtils;
 import com.jiang.tvlauncher.utils.LogUtil;
@@ -639,7 +640,8 @@ public class Home_Activity extends Base_Activity implements View.OnClickListener
                     } else {
 
                         Loading.show(this, "请稍后");
-                        new DownUtil(this).downLoad(channelList.getResult().get(i).getAppList().get(0).getDownloadUrl(), channelList.getResult().get(i).getAppList().get(0).getAppName() + ".apk", true);
+                        new DownloadUtils(this, channelList.getResult().get(i).getAppList().get(0).getDownloadUrl(), channelList.getResult().get(i).getAppList().get(0).getAppName() + ".apk");
+//                        new DownUtil(this).downLoad(channelList.getResult().get(i).getAppList().get(0).getDownloadUrl(), channelList.getResult().get(i).getAppList().get(0).getAppName() + ".apk", true);
                     }
                 } else
                     Toast.makeText(this, "栏目未开通", Toast.LENGTH_SHORT).show();
