@@ -7,20 +7,20 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.widget.GridView;
 
-import com.jiang.tvlauncher.MyApp;
 import com.jiang.tvlauncher.R;
 import com.jiang.tvlauncher.adapter.AppAdapter;
 import com.jiang.tvlauncher.entity.AppBean;
 import com.jiang.tvlauncher.entity.AppDataManage;
+import com.jiang.tvlauncher.utils.LogUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author: jiangadmin
- * @date: 2017/6/12.
- * @Email: www.fangmu@qq.com
- * @Phone: 186 6120 1018
+ * @author jiangadmin
+ * date: 2017/6/12.
+ * Email: www.fangmu@qq.com
+ * Phone: 186 6120 1018
  * TODO: 应用列表
  */
 
@@ -28,9 +28,7 @@ public class APPList_Activity extends Base_Activity {
     private static final String TAG = "APPList_Activity";
 
     private GridView mGridView;
-    private List<AppBean> mAppList;
     private List<AppBean> showlist = new ArrayList<>();
-    private AppAdapter mAdapter;
 
     String packagename = "";
 
@@ -44,7 +42,7 @@ public class APPList_Activity extends Base_Activity {
     }
 
     private void initview() {
-        mGridView =  findViewById(R.id.app_grid);
+        mGridView = findViewById(R.id.app_grid);
     }
 
     //能显示的程序包名
@@ -52,8 +50,9 @@ public class APPList_Activity extends Base_Activity {
 
     private void initeven() {
         AppDataManage getAppInstance = new AppDataManage(this);
-        mAppList = getAppInstance.getLaunchAppList();
+        List<AppBean> mAppList = getAppInstance.getLaunchAppList();
         for (int i = 0; i < mAppList.size(); i++) {
+            LogUtil.e(TAG, mAppList.get(i).getName());
             if (packagename.equals("ALL")) {
                 for (int j = 0; j < 10; j++)
                     showlist.addAll(mAppList);
@@ -63,7 +62,7 @@ public class APPList_Activity extends Base_Activity {
                 showlist.add(mAppList.get(i));
             }
         }
-        mAdapter = new AppAdapter(this, showlist);
+        AppAdapter mAdapter = new AppAdapter(this, showlist);
         mGridView.setAdapter(mAdapter);
         mGridView.setSmoothScrollbarEnabled(true);
 
@@ -83,7 +82,5 @@ public class APPList_Activity extends Base_Activity {
             startActivity(new Intent(getPackageManager().getLaunchIntentForPackage(showlist.get(0).getPackageName())));
             finish();
         }
-
-
     }
 }

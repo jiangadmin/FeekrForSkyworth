@@ -8,25 +8,23 @@ import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.LinearLayout;
 
-import com.jiang.tvlauncher.MyApp;
 import com.jiang.tvlauncher.R;
 import com.jiang.tvlauncher.dialog.Loading;
 import com.jiang.tvlauncher.servlet.Update_Servlet;
 import com.jiang.tvlauncher.utils.Tools;
 
 /**
- * @author: jiangadmin
- * @date: 2017/7/3.
- * @Email: www.fangmu@qq.com
- * @Phone: 186 6120 1018
+ * @author jiangadmin
+ * date: 2017/7/3.
+ * Email: www.fangmu@qq.com
+ * Phone: 186 6120 1018
  * TODO: 控制台
  */
 
 public class Setting_Activity extends Base_Activity implements View.OnClickListener {
-    private static final String TAG = "Setting_Activity";
 
     //商店  互联 媒体中心  网络 检测更新  设置
-    LinearLayout   setting3, setting4, setting5, setting6;
+    LinearLayout setting3, setting4, setting5, setting6;
 
     public static void start(Context context) {
         Intent intent = new Intent();

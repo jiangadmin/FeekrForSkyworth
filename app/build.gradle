@@ -6,7 +6,7 @@ android {
         jiang {
             keyAlias 'jiang'
             keyPassword 'jiangadmin'
-            storeFile file('../Jiang.jks')
+            storeFile file('../../Jiang.jks')
             storePassword 'jiangadmin'
         }
     }
@@ -30,15 +30,21 @@ android {
     }
 
     buildTypes {
-        debug{
-            buildConfigField "String", "NetUrl", "\"http://testapi.feekrs.com/\""
-
-        }
         release {
-//            buildConfigField "String", "NetUrl", "\"http://api.feekrs.com/\""
-            buildConfigField "String", "NetUrl", "\"http://testapi.feekrs.com/\""
-
             minifyEnabled false
+            buildConfigField "String", "NetUrl", "\"http://api.feekrs.com/\""
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.jiang
+        }
+        tencent{
+            minifyEnabled false
+            buildConfigField "String", "NetUrl", "\"http://api.tentrip.aisee.tv/\""
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.jiang
+        }
+        debug {
+            minifyEnabled false
+            buildConfigField "String", "NetUrl", "\"http://testapi.feekrs.com/\""
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.jiang
         }

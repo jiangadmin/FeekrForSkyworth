@@ -11,7 +11,6 @@ import android.text.TextUtils;
 import android.widget.Toast;
 import android.widget.VideoView;
 
-import com.jiang.tvlauncher.MyApp;
 import com.jiang.tvlauncher.R;
 import com.jiang.tvlauncher.entity.Save_Key;
 import com.jiang.tvlauncher.servlet.DownUtil;
@@ -20,10 +19,10 @@ import com.jiang.tvlauncher.utils.SaveUtils;
 import com.jiang.tvlauncher.utils.Tools;
 
 /**
- * @author: jiangadmin
- * @date: 2017/8/22.
- * @Email: www.fangmu@qq.com
- * @Phone: 186 6120 1018
+ * @author jiangadmin
+ * date: 2017/8/22.
+ * Email: www.fangmu@qq.com
+ * Phone: 186 6120 1018
  * TODO: 视频播放
  */
 
@@ -46,7 +45,7 @@ public class Video_Activity extends Base_Activity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video);
-        videoView =  findViewById(R.id.videoView);
+        videoView = findViewById(R.id.videoView);
 
         String videof = Environment.getExternalStorageDirectory().getPath() + "/feekr/Download/" + SaveUtils.getString(Save_Key.NewImageName);
 

@@ -58,7 +58,7 @@ public class DownUtil {
             }
         });
         // Sdcard不可用
-        if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+        if (!activity.getExternalFilesDir(null).equals(Environment.MEDIA_MOUNTED)) {
             Toast.makeText(activity, "SD卡不可用~", Toast.LENGTH_SHORT).show();
             Loading.dismiss();
 
