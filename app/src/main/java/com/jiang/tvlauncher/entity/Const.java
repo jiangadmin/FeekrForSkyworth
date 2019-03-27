@@ -13,8 +13,11 @@ import com.jiang.tvlauncher.BuildConfig;
  * update：
  */
 public class Const {
+    /**
+     * 存储位置
+     */
+    public static String FilePath = Environment.getExternalStorageDirectory().getPath() + "/feekr/Download/";
 
-    public static final String FilePath = Environment.getExternalStorageDirectory().getPath() + "/feekr/Download/";
     public static String URL = BuildConfig.NetUrl;
 //    public static String URL = " http://testapi.feekrs.com/";
 
