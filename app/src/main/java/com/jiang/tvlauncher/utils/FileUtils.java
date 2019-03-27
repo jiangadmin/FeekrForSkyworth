@@ -6,8 +6,10 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Environment;
 import android.os.StatFs;
+import android.text.TextUtils;
 import android.text.format.Formatter;
 import android.util.Log;
+import android.widget.TextView;
 
 import com.jiang.tvlauncher.BuildConfig;
 import com.jiang.tvlauncher.MyApp;
@@ -325,7 +327,7 @@ public class FileUtils {
      */
     public static boolean checkFileExists(String name) {
         boolean status;
-        if (!name.equals("")) {
+        if (!TextUtils.isEmpty(name)) {
             File path = Environment.getExternalStorageDirectory() ;
             File newPath = new File(path.toString() + "/feekr/Download/"+ name);
             status = newPath.exists();
